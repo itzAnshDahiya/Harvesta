@@ -55,6 +55,36 @@ const useAuthStore = create(
         }
       },
 
+      updateProfile: async ({ name, email }) => {
+        set({ isLoading: true });
+        try {
+          const response = await api.put('/auth/me', { name, email });
+          set({ user: response.data.user, isLoading: false });
+          return { ok: true, message: 'Profile updated successfully' };
+        } catch (error) {
+          set({ isLoading: false });
+          return {
+            ok: false,
+            message: error.response?.data?.message || 'Failed to update profile.',
+          };
+        }
+      },
+
+      changePassword: async ({ currentPassword, newPassword }) => {
+        set({ isLoading: true });
+        try {
+          const response = await api.put('/auth/change-password', { currentPassword, newPassword });
+          set({ isLoading: false });
+          return { ok: true, message: response.data.message || 'Password updated successfully' };
+        } catch (error) {
+          set({ isLoading: false });
+          return {
+            ok: false,
+            message: error.response?.data?.message || 'Failed to change password.',
+          };
+        }
+      },
+
       logout: () => {
         localStorage.removeItem('harvesta-token');
         set({ token: null, user: null, isLoading: false });
