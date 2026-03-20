@@ -1,11 +1,16 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   BarChart2, Map, Clipboard, Settings, Bug, DollarSign, Users,
-  Leaf, ChevronRight, Monitor
+  Leaf, ChevronRight, Monitor, LogOut
 } from 'lucide-react';
+import useAuthStore from '../../store/authStore';
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+
   const navItems = [
     { name: 'Dashboard', path: '/', icon: BarChart2 },
     { name: 'My Fields', path: '/fields', icon: Map },
@@ -16,8 +21,13 @@ const Sidebar = () => {
 
   const subItems = [
     { name: 'AI Pest ID', path: '/pest-id', icon: Bug },
-    { name: 'Login', path: '/login', icon: Monitor },
+    { name: 'Profile', path: '/login', icon: Monitor },
   ];
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <aside className="w-[300px] bg-[#0b1e15] h-screen flex flex-col p-8 overflow-hidden relative z-50 shadow-[40px_0_100px_rgba(0,0,0,0.5)] border-r border-white/5 shrink-0">
@@ -86,12 +96,25 @@ const Sidebar = () => {
                  <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-[#0b1e15] shadow-lg animate-pulse"></div>
                </div>
                <div className="flex flex-col">
-                  <p className="font-black text-white text-sm tracking-tight uppercase italic underline underline-offset-4 decoration-emerald-500/30">Joe Harrison</p>
-                  <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mt-1">Grid Admin v1.02</p>
+                  <p className="font-black text-white text-sm tracking-tight uppercase italic underline underline-offset-4 decoration-emerald-500/30">
+                    {user?.name || 'Harvesta User'}
+                  </p>
+                  <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mt-1 truncate max-w-[145px]">
+                    {user?.email || 'No Email'}
+                  </p>
                </div>
             </div>
             <Settings className="w-5 h-5 text-[#3e5a4a] group-hover:text-emerald-400 group-hover:rotate-45 transition-all" />
         </div>
+
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="w-full mt-4 bg-[#1a3a2a] hover:bg-[#2e5e40] text-white py-3 px-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] shadow-xl transition-all flex items-center justify-center gap-3"
+        >
+          <LogOut className="w-4 h-4" />
+          Logout
+        </button>
 
         {/* Global Grid Status like Mockup 1 Bottom Sidebar */}
         <div className="mt-8 flex items-center justify-between text-[11px] font-bold text-[#3e5a4a] px-5 opacity-40 tracking-widest uppercase">
