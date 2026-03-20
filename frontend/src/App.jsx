@@ -9,6 +9,7 @@ import MarketPrices from './pages/MarketPrices';
 import CommunityForum from './pages/CommunityForum';
 import PestId from './pages/PestId';
 import DroneMap from './pages/DroneMap';
+import Profile from './pages/Profile';
 import useAuthStore from './store/authStore';
 
 function AppLayout() {
@@ -75,6 +76,14 @@ function AppLayout() {
             element={
               <ProtectedRoute>
                 <DroneMap />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
               </ProtectedRoute>
             }
           />

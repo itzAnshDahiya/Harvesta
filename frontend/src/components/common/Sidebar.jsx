@@ -21,7 +21,7 @@ const Sidebar = () => {
 
   const subItems = [
     { name: 'AI Pest ID', path: '/pest-id', icon: Bug },
-    { name: 'Profile', path: '/login', icon: Monitor },
+    { name: 'Profile', path: '/profile', icon: Monitor },
   ];
 
   const handleLogout = () => {
