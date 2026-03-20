@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  fields    Field[]
+}
+
+model Field {
+  id           String   @id @default(uuid())
+  userId       String
+  name         String
+  latitude     Float
+  longitude    Float
+  sizeHectares Float
+  createdAt    DateTime @default(now())
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  crops Crop[]
+}
+
+model Crop {
+  id        String   @id @default(uuid())
+  fieldId   String
+  name      String
+  stage     String?
+  createdAt DateTime @default(now())
+
+  field Field @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+}
