@@ -1,6 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Map, MapPin, Eye, Battery, Navigation } from 'lucide-react';
+import { motion as Motion } from 'framer-motion';
+import { MapPin, Eye, Battery, Navigation } from 'lucide-react';
 
 const DroneMap = () => {
   return (
@@ -17,7 +17,7 @@ const DroneMap = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
         {/* Main Map Area */}
-        <motion.div 
+        <Motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="lg:col-span-2 glass-panel p-2 bg-black/40 border-emerald-500/20 rounded-2xl relative overflow-hidden h-full"
@@ -37,11 +37,11 @@ const DroneMap = () => {
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
              <div className="w-48 h-48 border border-emerald-500/50 rounded-full animate-ping opacity-20"></div>
           </div>
-        </motion.div>
+        </Motion.div>
 
         {/* Info Area */}
         <div className="space-y-6 flex flex-col h-full">
-          <motion.div 
+          <Motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             className="glass-panel p-6 bg-emerald-900/40 border-emerald-500/20 flex-1"
@@ -63,7 +63,7 @@ const DroneMap = () => {
                 <span className="text-white text-sm">Queued</span>
               </div>
             </div>
-          </motion.div>
+          </Motion.div>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { Sprout, Mail, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
@@ -21,11 +21,9 @@ const getPasswordStrength = (checks) => {
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login, register, isLoading } = useAuthStore((state) => ({
-    login: state.login,
-    register: state.register,
-    isLoading: state.isLoading,
-  }));
+  const login = useAuthStore((state) => state.login);
+  const register = useAuthStore((state) => state.register);
+  const isLoading = useAuthStore((state) => state.isLoading);
 
   const [mode, setMode] = React.useState('login');
   const [formData, setFormData] = React.useState({
@@ -71,7 +69,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center p-8 h-full relative">
+    <div className="relative flex min-h-screen w-full items-center justify-center p-8">
       {/* Background image for login */}
       <div 
         className="absolute inset-0 z-0 opacity-40 grayscale"
@@ -83,7 +81,7 @@ const Login = () => {
       />
       <div className="absolute inset-0 z-[1] bg-gradient-to-br from-[#051109] to-transparent pointer-events-none" />
 
-      <motion.div 
+      <Motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="relative z-10 glass-card p-12 w-full max-w-xl bg-white/95 backdrop-blur-3xl shadow-[0_0_100px_rgba(0,0,0,0.4)] border-white/40"
@@ -136,7 +134,7 @@ const Login = () => {
                 value={formData.email}
                 onChange={onChange}
                 className="w-full bg-[#f2f6f3] border-2 border-transparent focus:border-[#4db67e] rounded-3xl py-5 pl-16 pr-6 text-[#1a3a2a] font-bold outline-none transition-all placeholder:text-[#1a3a2a]/20"
-                placeholder="farmer@harvestsa.com"
+                placeholder="farmer@harvesta.com"
               />
             </div>
           </div>
@@ -212,7 +210,7 @@ const Login = () => {
            <span>v1.2.48 ACTIVE</span>
            <span>SECURE AES-256</span>
         </div>
-      </motion.div>
+      </Motion.div>
     </div>
   );
 };

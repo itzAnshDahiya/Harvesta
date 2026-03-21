@@ -12,7 +12,7 @@ const Sidebar = () => {
   const logout = useAuthStore((state) => state.logout);
 
   const navItems = [
-    { name: 'Dashboard', path: '/', icon: BarChart2 },
+    { name: 'Dashboard', path: '/dashboard', icon: BarChart2 },
     { name: 'My Fields', path: '/fields', icon: Map },
     { name: 'Inventory', path: '/inventory', icon: Clipboard },
     { name: 'Market', path: '/market', icon: DollarSign },
@@ -30,9 +30,9 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-[300px] bg-[#0b1e15] h-screen flex flex-col p-8 overflow-hidden relative z-50 shadow-[40px_0_100px_rgba(0,0,0,0.5)] border-r border-white/5 shrink-0">
+    <aside className="h-screen w-[280px] xl:w-[300px] min-w-[280px] bg-[#0b1e15] flex flex-col p-8 overflow-hidden relative z-50 shadow-[40px_0_100px_rgba(0,0,0,0.5)] border-r border-white/5 shrink-0">
       {/* 1. LAYER 1: HARVESTA BRANDING (DITTO MOCKUP 1) */}
-      <div className="flex items-center gap-4 mb-12 px-2 group cursor-pointer group">
+      <div className="flex items-center gap-4 mb-12 px-2 group cursor-pointer">
          <div className="bg-[#1a3a2a] p-3 rounded-2xl group-hover:bg-emerald-600 transition-all duration-500 shadow-xl border border-white/10 group-hover:-rotate-12">
             <Leaf className="w-7 h-7 text-[#7be3a6] group-hover:text-white" />
          </div>

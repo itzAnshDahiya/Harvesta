@@ -1,11 +1,11 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { 
-  ArrowLeft, Bookmark, Bell, CloudRain, Sun, Droplets, Calendar, 
-  MapPin, CheckCircle2, Mail, Sprout, Bug, Zap, Thermometer, Wind, CloudSun, Eye
+  ArrowLeft, Bookmark, Bell, CloudRain, Sun, Droplets, Calendar,
+  MapPin, CheckCircle2, Sprout, Bug, Zap, Thermometer, Wind, CloudSun
 } from 'lucide-react';
 import { 
-  ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip
+  ResponsiveContainer, AreaChart, Area
 } from 'recharts';
 
 const chartData = [
@@ -30,7 +30,7 @@ const Dashboard = () => {
       <div className="relative z-10 w-full max-w-[1920px] mx-auto space-y-6">
         
         {/* TOP STATUS BAR */}
-        <motion.div 
+        <Motion.div 
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className="w-full glass-card p-5 flex items-center justify-between shadow-2xl backdrop-blur-3xl bg-white/95"
@@ -66,14 +66,14 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-        </motion.div>
+        </Motion.div>
 
         {/* DASHBOARD CONTENT GRID */}
         <div className="relative z-10 grid grid-cols-12 gap-5 items-start">
           
           {/* LEFT COLUMN */}
           <div className="col-span-12 xl:col-span-3 flex flex-col gap-5 h-full">
-            <motion.div 
+            <Motion.div 
               initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
               className="glass-card p-6 flex items-center justify-between gap-4"
             >
@@ -93,9 +93,9 @@ const Dashboard = () => {
                 </div>
               </div>
               <img src="https://images.unsplash.com/photo-1599839619722-39751411ea63?q=80&w=200" className="w-20 h-16 rounded-xl object-cover shadow-md border-2 border-white shrink-0" alt="Field" />
-            </motion.div>
+            </Motion.div>
 
-            <motion.div 
+            <Motion.div 
               initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1 }}
               className="glass-card p-6 space-y-5"
             >
@@ -115,9 +115,9 @@ const Dashboard = () => {
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
-            </motion.div>
+            </Motion.div>
 
-            <motion.div 
+            <Motion.div 
               initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
               className="glass-card p-5 space-y-3"
             >
@@ -129,12 +129,12 @@ const Dashboard = () => {
                   <p className="text-[9px] font-bold text-[#3e5a4a] opacity-60 leading-tight">Ideal window: +12 days</p>
                 </div>
               </div>
-            </motion.div>
+            </Motion.div>
           </div>
 
           {/* MIDDLE COLUMN */}
           <div className="col-span-12 xl:col-span-6 flex flex-col gap-5 min-h-[600px]">
-             <motion.div 
+             <Motion.div 
               initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
               className="glass-card p-8 flex-1 flex flex-col shadow-[0_40px_100px_rgba(0,0,0,0.1)] relative z-10"
             >
@@ -169,13 +169,13 @@ const Dashboard = () => {
                       <span className="text-[9px] font-black text-[#1a3a2a] uppercase truncate leading-none">{task.name}</span>
                     </div>
                     <div className="col-span-9 relative h-8 w-full bg-emerald-50/20 rounded-full flex items-center px-1">
-                       <motion.div 
+                       <Motion.div 
                           initial={{ width: 0 }} animate={{ width: `${(task.w/10)*100}%` }} 
                           style={{ left: `${(task.s/10)*100}%`, backgroundColor: task.c }}
                           className="absolute h-6 rounded-full px-2 flex items-center shadow-lg truncate"
                         >
                           <span className="text-[8px] font-black text-white whitespace-nowrap tracking-tighter uppercase px-2">{task.name}</span>
-                        </motion.div>
+                        </Motion.div>
                     </div>
                   </div>
                 ))}
@@ -193,12 +193,12 @@ const Dashboard = () => {
                    <p className="text-[9px] font-black text-[#3e5a4a] opacity-30 uppercase tracking-widest">System Nominal v2.04</p>
                 </div>
               </div>
-            </motion.div>
+            </Motion.div>
           </div>
 
           {/* RIGHT COLUMN */}
           <div className="col-span-12 xl:col-span-3 flex flex-col gap-5 h-full">
-            <motion.div 
+            <Motion.div 
               initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
               className="glass-card !bg-white/70 p-8 flex flex-col items-center relative overflow-hidden group min-h-[400px]"
             >
@@ -223,9 +223,9 @@ const Dashboard = () => {
                    <p className="text-[9px] font-medium text-[#3e5a4a] opacity-50 mt-1 uppercase tracking-widest">Sector A monitor active</p>
                  </div>
                </div>
-            </motion.div>
+            </Motion.div>
 
-            <motion.div 
+            <Motion.div 
               initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }}
               className="flex-1 glass-card overflow-hidden relative group min-h-[200px]"
             >
@@ -237,12 +237,12 @@ const Dashboard = () => {
                  </div>
                  <p className="text-emerald-100 text-[10px] font-medium leading-relaxed opacity-70 border-l border-emerald-500/50 pl-4">Target sector A: ACHIEVED.</p>
               </div>
-            </motion.div>
+            </Motion.div>
           </div>
         </div>
 
         {/* BOTTOM SECTION */}
-        <motion.div 
+        <Motion.div 
           initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}
           className="glass-card !bg-white/95 p-10 grid grid-cols-12 gap-10 shadow-2xl relative"
         >
@@ -275,7 +275,7 @@ const Dashboard = () => {
                 </div>
                 <button className="w-full bg-[#1a3a2a] text-white py-4 rounded-full font-black uppercase text-xs tracking-widest hover:bg-emerald-950 shadow-xl">Apply Settings</button>
           </div>
-        </motion.div>
+        </Motion.div>
 
         {/* SYSTEM STATUS FOOTER */}
         <div className="w-full glass-card !bg-[#0b1e15] !rounded-full py-6 px-12 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl border-white/5">

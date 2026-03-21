@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { UserRound, Mail, Lock, ShieldCheck } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 
@@ -18,9 +18,18 @@ const Profile = () => {
   const [status, setStatus] = React.useState({ type: '', message: '' });
 
   React.useEffect(() => {
-    setProfileData({
-      name: user?.name || '',
-      email: user?.email || '',
+    const nextName = user?.name || '';
+    const nextEmail = user?.email || '';
+
+    setProfileData((previous) => {
+      if (previous.name === nextName && previous.email === nextEmail) {
+        return previous;
+      }
+
+      return {
+        name: nextName,
+        email: nextEmail,
+      };
     });
   }, [user]);
 
@@ -82,14 +91,14 @@ const Profile = () => {
     <div className="relative min-h-screen w-full bg-[#051109] text-[#1a3a2a] p-10 font-sans overflow-y-auto no-scrollbar">
       <div className="fixed inset-0 z-0 topo-pattern opacity-10 pointer-events-none" />
 
-      <motion.header
+      <Motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="relative z-10 mb-12"
       >
         <h1 className="text-5xl font-black tracking-tighter text-white uppercase italic">Profile Center</h1>
         <p className="text-[#a3b8ad] text-[10px] font-black uppercase tracking-[0.4em] opacity-40 mt-3">Account Identity and Security Controls</p>
-      </motion.header>
+      </Motion.header>
 
       {status.message ? (
         <div className={`relative z-10 mb-8 p-4 rounded-2xl border text-xs font-black uppercase tracking-wider ${status.type === 'success' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-red-100 text-red-700 border-red-200'}`}>
@@ -98,7 +107,7 @@ const Profile = () => {
       ) : null}
 
       <div className="relative z-10 grid grid-cols-12 gap-8 pb-20">
-        <motion.form
+        <Motion.form
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           onSubmit={onProfileSubmit}
@@ -141,9 +150,9 @@ const Profile = () => {
           >
             {isLoading ? 'Saving...' : 'Save Profile'}
           </button>
-        </motion.form>
+        </Motion.form>
 
-        <motion.form
+        <Motion.form
           initial={{ x: 20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           onSubmit={onPasswordSubmit}
@@ -206,7 +215,7 @@ const Profile = () => {
           >
             {isLoading ? 'Updating...' : 'Change Password'}
           </button>
-        </motion.form>
+        </Motion.form>
       </div>
     </div>
   );

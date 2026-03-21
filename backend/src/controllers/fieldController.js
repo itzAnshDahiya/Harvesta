@@ -17,13 +17,32 @@ exports.getFieldsByUser = async (req, res) => {
 exports.createField = async (req, res) => {
   try {
     const { name, latitude, longitude, sizeHectares } = req.body;
+
+    if (!name || latitude === undefined || longitude === undefined || sizeHectares === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name, latitude, longitude and sizeHectares are required'
+      });
+    }
+
+    const parsedLatitude = Number(latitude);
+    const parsedLongitude = Number(longitude);
+    const parsedSizeHectares = Number(sizeHectares);
+
+    if ([parsedLatitude, parsedLongitude, parsedSizeHectares].some(Number.isNaN)) {
+      return res.status(400).json({
+        success: false,
+        message: 'latitude, longitude and sizeHectares must be valid numbers'
+      });
+    }
+
     const field = await prisma.field.create({
       data: {
         userId: req.user.id,
         name,
-        latitude,
-        longitude,
-        sizeHectares
+        latitude: parsedLatitude,
+        longitude: parsedLongitude,
+        sizeHectares: parsedSizeHectares
       }
     });
     res.status(201).json({ success: true, data: field });

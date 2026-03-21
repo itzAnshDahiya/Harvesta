@@ -1,6 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Bug, Camera, Upload, CheckCircle2, Zap, ShieldAlert, Eye } from 'lucide-react';
+import { motion as Motion } from 'framer-motion';
+import { Bug, Camera, Zap, ShieldAlert, Eye } from 'lucide-react';
 
 const PestId = () => {
   const recentDetections = [
@@ -13,7 +13,7 @@ const PestId = () => {
     <div className="relative min-h-screen w-full bg-[#051109] text-[#1a3a2a] p-10 font-sans overflow-y-auto no-scrollbar">
       <div className="fixed inset-0 z-0 topo-pattern opacity-10 pointer-events-none" />
 
-      <motion.header 
+         <Motion.header 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="relative z-10 flex flex-col gap-4 mb-16"
@@ -23,13 +23,13 @@ const PestId = () => {
          </div>
          <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-white uppercase italic leading-none">Pest & Pathogen Analysis</h1>
          <p className="text-[#a3b8ad] text-[10px] font-black uppercase tracking-[0.4em] opacity-40">Automated Visual Recognition & Treatment Protocols</p>
-      </motion.header>
+      </Motion.header>
 
       <div className="relative z-10 grid grid-cols-12 gap-8 items-start pb-20">
         
         {/* Main Scanner Section */}
         <div className="col-span-12 xl:col-span-7 flex flex-col gap-8">
-           <motion.div 
+                <Motion.div 
              initial={{ scale: 0.95, opacity: 0 }}
              animate={{ scale: 1, opacity: 1 }}
              className="glass-card !bg-white/95 p-10 sm:p-16 shadow-[0_40px_100px_rgba(0,0,0,0.2)] flex flex-col"
@@ -54,7 +54,7 @@ const PestId = () => {
                     </div>
                     <button className="bg-[#1a3a2a] text-white py-4 px-12 rounded-full font-black uppercase text-[10px] tracking-widest shadow-2xl hover:bg-emerald-900 transition-colors">Select From Cloud Drive</button>
                  </div>
-                 <motion.div 
+                 <Motion.div 
                     animate={{ y: ['100%', '-100%'] }} 
                     transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
                     className="absolute inset-x-0 h-1 bg-emerald-500/30 blur-[4px] pointer-events-none z-20 group-hover:opacity-100 opacity-0"
@@ -75,12 +75,12 @@ const PestId = () => {
                     <p className="text-xl sm:text-3xl font-black text-[#1a3a2a] italic lowercase tracking-tighter">14k</p>
                  </div>
               </div>
-           </motion.div>
+           </Motion.div>
         </div>
 
         {/* Right Sidebar Block: Recent Detections */}
         <div className="col-span-12 xl:col-span-5 flex flex-col gap-8">
-           <motion.div 
+                <Motion.div 
              initial={{ x: 50, opacity: 0 }}
              animate={{ x: 0, opacity: 1 }}
              className="glass-card !bg-white/95 p-8 sm:p-12 shadow-2xl space-y-10"
@@ -107,9 +107,9 @@ const PestId = () => {
                   </div>
                 ))}
               </div>
-           </motion.div>
+           </Motion.div>
 
-           <motion.div 
+           <Motion.div 
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -129,7 +129,7 @@ const PestId = () => {
               <div className="absolute -right-8 -bottom-8 opacity-5 group-hover:scale-110 transition-transform duration-1000">
                 <ShieldAlert className="w-32 h-32 text-emerald-500" />
               </div>
-           </motion.div>
+                </Motion.div>
         </div>
       </div>
     </div>

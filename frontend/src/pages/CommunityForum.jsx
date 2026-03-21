@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { MessageSquare, User } from 'lucide-react';
 
 const CommunityForum = () => {
@@ -23,7 +23,7 @@ const CommunityForum = () => {
 
       <div className="space-y-4">
         {posts.map(post => (
-          <motion.div 
+          <Motion.div 
             key={post.id}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -41,7 +41,7 @@ const CommunityForum = () => {
             <div className="text-emerald-300 flex items-center gap-2 font-semibold">
               <MessageSquare className="w-4 h-4" /> {post.replies} Replies
             </div>
-          </motion.div>
+          </Motion.div>
         ))}
       </div>
     </div>

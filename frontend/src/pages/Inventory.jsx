@@ -1,6 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Package, Plus, Search, Filter, ArrowUpRight, ArrowDownRight, Droplets, Sprout, Hammer, TrendingUp } from 'lucide-react';
+import { motion as Motion } from 'framer-motion';
+import { Package, Plus, Search, Filter, ArrowUpRight, ArrowDownRight, Droplets, Sprout, Hammer } from 'lucide-react';
 
 const Inventory = () => {
   const inventoryItems = [
@@ -14,7 +14,7 @@ const Inventory = () => {
     <div className="relative min-h-screen w-full bg-[#051109] text-[#1a3a2a] p-10 font-sans overflow-y-auto no-scrollbar">
       <div className="fixed inset-0 z-0 topo-pattern opacity-10 pointer-events-none" />
 
-      <motion.header 
+         <Motion.header 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center mb-16 gap-6"
@@ -26,13 +26,13 @@ const Inventory = () => {
         <button className="bg-emerald-500 hover:bg-emerald-400 text-[#0b1e15] py-4 px-10 rounded-full font-black uppercase text-xs tracking-widest shadow-2xl transition-all hover:scale-105 flex items-center gap-3">
           <Plus className="w-5 h-5" /> Register New Asset
         </button>
-      </motion.header>
+      </Motion.header>
 
       <div className="relative z-10 grid grid-cols-12 gap-8 items-start pb-20">
         
         {/* Left Stats Block */}
         <div className="col-span-12 lg:col-span-4 space-y-8">
-           <motion.div 
+                <Motion.div 
              initial={{ x: -50, opacity: 0 }}
              animate={{ x: 0, opacity: 1 }}
              className="glass-card !bg-white/95 p-12 shadow-2xl !rounded-[3rem]"
@@ -61,12 +61,12 @@ const Inventory = () => {
                     </div>
                  </div>
               </div>
-           </motion.div>
+           </Motion.div>
         </div>
 
         {/* Assets table */}
         <div className="col-span-12 lg:col-span-8 flex flex-col gap-8">
-           <motion.div 
+                <Motion.div 
              initial={{ scale: 0.95, opacity: 0 }}
              animate={{ scale: 1, opacity: 1 }}
              className="glass-card !bg-white/95 p-10 sm:p-12 shadow-2xl !rounded-[3rem]"
@@ -111,7 +111,7 @@ const Inventory = () => {
                    </div>
                  ))}
               </div>
-           </motion.div>
+                </Motion.div>
         </div>
       </div>
     </div>

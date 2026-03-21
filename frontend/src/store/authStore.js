@@ -46,12 +46,14 @@ const useAuthStore = create(
       },
 
       fetchMe: async () => {
-        if (!get().token) return;
+        if (!get().token) return { ok: false };
         try {
           const response = await api.get('/auth/me');
           set({ user: response.data.user });
+          return { ok: true };
         } catch {
           get().logout();
+          return { ok: false };
         }
       },
 

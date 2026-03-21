@@ -18,6 +18,11 @@ exports.protect = async (req, res, next) => {
       where: { id: decoded.id },
       select: { id: true, name: true, email: true }
     });
+
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Not authorized, user not found' });
+    }
+
     next();
   } catch (error) {
     res.status(401).json({ success: false, message: 'Not authorized, token failed' });

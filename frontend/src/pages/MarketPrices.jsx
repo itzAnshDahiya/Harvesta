@@ -1,7 +1,7 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Globe, Target, ShieldAlert, Zap } from 'lucide-react';
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
+import { motion as Motion } from 'framer-motion';
+import { TrendingUp, TrendingDown, Globe, Target, Zap } from 'lucide-react';
+import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from 'recharts';
 
 const marketData = [
   { name: '08:00', price: 420 }, { name: '10:00', price: 435 }, { name: '12:00', price: 430 },
@@ -20,7 +20,7 @@ const MarketPrices = () => {
     <div className="relative min-h-screen w-full bg-[#051109] text-[#1a3a2a] p-10 font-sans overflow-y-auto no-scrollbar">
       <div className="fixed inset-0 z-0 topo-pattern opacity-10 pointer-events-none" />
 
-      <motion.header 
+         <Motion.header 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-end mb-16 gap-8"
@@ -36,13 +36,13 @@ const MarketPrices = () => {
            <p className="text-[10px] font-black uppercase text-emerald-400 opacity-60">Total Portfolio</p>
            <h3 className="text-2xl sm:text-3xl font-black text-white">$142,480</h3>
         </div>
-      </motion.header>
+      </Motion.header>
 
       <div className="relative z-10 grid grid-cols-12 gap-8 items-start pb-20">
         
         {/* Main Terminal Area */}
         <div className="col-span-12 xl:col-span-8 flex flex-col gap-8">
-           <motion.div 
+                <Motion.div 
              initial={{ scale: 0.95, opacity: 0 }}
              animate={{ scale: 1, opacity: 1 }}
              className="glass-card p-10 !bg-[#0b1e15]/95 shadow-2xl border-white/10 flex flex-col min-h-[500px]"
@@ -89,12 +89,12 @@ const MarketPrices = () => {
                     <p className="text-xl sm:text-2xl font-black text-white italic">1.2M Units</p>
                  </div>
               </div>
-           </motion.div>
+           </Motion.div>
         </div>
 
         {/* Live Feed Sidebar */}
         <div className="col-span-12 xl:col-span-4 flex flex-col gap-8">
-           <motion.div 
+                <Motion.div 
              initial={{ x: 50, opacity: 0 }}
              animate={{ x: 0, opacity: 1 }}
              className="glass-card !bg-white/95 p-12 shadow-2xl flex flex-col gap-10 !rounded-[3rem]"
@@ -131,7 +131,7 @@ const MarketPrices = () => {
                  <button className="w-full bg-emerald-500 text-[#0b1e15] py-4 rounded-full font-black uppercase text-[10px] tracking-widest shadow-xl hover:bg-emerald-400 transition-colors">Apply Strategy</button>
                  <div className="absolute top-0 right-0 p-4 opacity-5"><Zap className="w-20 h-20 text-white" /></div>
               </div>
-           </motion.div>
+                </Motion.div>
         </div>
       </div>
     </div>

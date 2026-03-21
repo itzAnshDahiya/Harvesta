@@ -4,9 +4,10 @@ import useAuthStore from '../../store/authStore';
 
 const ProtectedRoute = ({ children }) => {
   const token = useAuthStore((state) => state.token);
+  const user = useAuthStore((state) => state.user);
   const location = useLocation();
 
-  if (!token) {
+  if (!token || !user) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
 

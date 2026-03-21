@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Sidebar from './components/common/Sidebar';
-import ProtectedRoute from './components/common/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Inventory from './pages/Inventory';
@@ -15,79 +14,60 @@ import useAuthStore from './store/authStore';
 function AppLayout() {
   const location = useLocation();
   const token = useAuthStore((state) => state.token);
+  const user = useAuthStore((state) => state.user);
   const fetchMe = useAuthStore((state) => state.fetchMe);
-  const showSidebar = token && location.pathname !== '/login';
+  const hasRequestedUser = React.useRef(false);
+  const showSidebar = token && user && location.pathname !== '/login';
 
   React.useEffect(() => {
-    if (token) {
+    if (!token) {
+      hasRequestedUser.current = false;
+      return;
+    }
+
+    if (!user && !hasRequestedUser.current) {
+      hasRequestedUser.current = true;
       fetchMe();
     }
-  }, [token, fetchMe]);
+  }, [token, user, fetchMe]);
 
   return (
-    <div className="flex h-screen bg-[#051109] text-[#1a3a2a] font-sans overflow-hidden w-screen">
+    <div className="flex min-h-screen w-full bg-[#051109] text-[#1a3a2a] font-sans overflow-hidden">
       {showSidebar ? <Sidebar /> : null}
 
-      <div className="flex-1 overflow-y-auto no-scrollbar relative">
+      <div className="relative min-w-0 flex-1 overflow-y-auto no-scrollbar">
         <Routes>
-          <Route path="/login" element={token ? <Navigate to="/" replace /> : <Login />} />
+          <Route path="/login" element={token && user ? <Navigate to="/" replace /> : <Login />} />
+          <Route path="/" element={token && user ? <Dashboard /> : <Login />} />
           <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
+            path="/dashboard"
+            element={token && user ? <Dashboard /> : <Navigate to="/login" replace />}
           />
           <Route
             path="/inventory"
-            element={
-              <ProtectedRoute>
-                <Inventory />
-              </ProtectedRoute>
-            }
+            element={token && user ? <Inventory /> : <Navigate to="/login" replace />}
           />
           <Route
             path="/market"
-            element={
-              <ProtectedRoute>
-                <MarketPrices />
-              </ProtectedRoute>
-            }
+            element={token && user ? <MarketPrices /> : <Navigate to="/login" replace />}
           />
           <Route
             path="/forum"
-            element={
-              <ProtectedRoute>
-                <CommunityForum />
-              </ProtectedRoute>
-            }
+            element={token && user ? <CommunityForum /> : <Navigate to="/login" replace />}
           />
           <Route
             path="/pest-id"
-            element={
-              <ProtectedRoute>
-                <PestId />
-              </ProtectedRoute>
-            }
+            element={token && user ? <PestId /> : <Navigate to="/login" replace />}
           />
           <Route
             path="/fields"
-            element={
-              <ProtectedRoute>
-                <DroneMap />
-              </ProtectedRoute>
-            }
+            element={token && user ? <DroneMap /> : <Navigate to="/login" replace />}
           />
           <Route
             path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
+            element={token && user ? <Profile /> : <Navigate to="/login" replace />}
           />
-          <Route path="*" element={<Navigate to={token ? '/' : '/login'} replace />} />
+          <Route path="*" element={<Navigate to={token && user ? '/' : '/login'} replace />} />
         </Routes>
       </div>
     </div>
