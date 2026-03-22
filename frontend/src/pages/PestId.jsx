@@ -10,34 +10,34 @@ const PestId = () => {
   ];
 
   return (
-    <div className="relative min-h-screen w-full bg-[#051109] text-[#1a3a2a] p-10 font-sans overflow-y-auto no-scrollbar">
+    <div className="relative min-h-screen w-full bg-[#051109] text-[#1a3a2a] p-6 font-sans overflow-y-auto no-scrollbar">
       <div className="fixed inset-0 z-0 topo-pattern opacity-10 pointer-events-none" />
 
          <Motion.header 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="relative z-10 flex flex-col gap-4 mb-16"
+        className="relative z-10 flex flex-col gap-3 mb-8"
       >
-         <div className="flex items-center gap-4 text-emerald-400 font-black text-[11px] tracking-[0.5em] uppercase opacity-60">
-            <Zap className="w-5 h-5" /> AI Diagnostic Neural Lab
+         <div className="flex items-center gap-3 text-emerald-400 font-black text-[10px] tracking-[0.5em] uppercase opacity-60">
+            <Zap className="w-4 h-4" /> AI Diagnostic Neural Lab
          </div>
-         <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-white uppercase italic leading-none">Pest & Pathogen Analysis</h1>
-         <p className="text-[#a3b8ad] text-[10px] font-black uppercase tracking-[0.4em] opacity-40">Automated Visual Recognition & Treatment Protocols</p>
+         <h1 className="text-3xl sm:text-5xl font-black tracking-tighter text-white uppercase italic leading-none">Pest & Pathogen Analysis</h1>
+         <p className="text-[#a3b8ad] text-[9px] font-black uppercase tracking-[0.4em] opacity-40">Automated Visual Recognition & Treatment Protocols</p>
       </Motion.header>
 
-      <div className="relative z-10 grid grid-cols-12 gap-8 items-start pb-20">
+      <div className="relative z-10 grid grid-cols-12 gap-6 items-start pb-12">
         
         {/* Main Scanner Section */}
-        <div className="col-span-12 xl:col-span-7 flex flex-col gap-8">
+        <div className="col-span-12 xl:col-span-7 flex flex-col gap-6">
                 <Motion.div 
              initial={{ scale: 0.95, opacity: 0 }}
              animate={{ scale: 1, opacity: 1 }}
-             className="glass-card !bg-white/95 p-10 sm:p-16 shadow-[0_40px_100px_rgba(0,0,0,0.2)] flex flex-col"
+             className="glass-card !bg-white/95 p-8 shadow-[0_40px_100px_rgba(0,0,0,0.2)] flex flex-col"
            >
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-16 border-b border-black/5 pb-8">
-                 <h2 className="text-2xl sm:text-3xl font-black text-[#1a3a2a] uppercase italic tracking-tighter">Diagnostic Scanner</h2>
-                 <div className="bg-[#1a3a2a] py-3 px-6 rounded-2xl text-[9px] font-black text-white flex items-center gap-3 uppercase shadow-lg shrink-0">
-                    <ShieldAlert className="w-4 h-4 text-emerald-400" />
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 border-b border-black/5 pb-6">
+                 <h2 className="text-xl font-black text-[#1a3a2a] uppercase italic tracking-tighter">Diagnostic Scanner</h2>
+                 <div className="bg-[#1a3a2a] py-2 px-5 rounded-2xl text-[8px] font-black text-white flex items-center gap-2 uppercase shadow-lg shrink-0">
+                    <ShieldAlert className="w-3 h-3 text-emerald-400" />
                     <span>Model v3.04 (Active)</span>
                  </div>
               </div>
@@ -79,18 +79,18 @@ const PestId = () => {
         </div>
 
         {/* Right Sidebar Block: Recent Detections */}
-        <div className="col-span-12 xl:col-span-5 flex flex-col gap-8">
+        <div className="col-span-12 xl:col-span-5 flex flex-col gap-6">
                 <Motion.div 
              initial={{ x: 50, opacity: 0 }}
              animate={{ x: 0, opacity: 1 }}
-             className="glass-card !bg-white/95 p-8 sm:p-12 shadow-2xl space-y-10"
+             className="glass-card !bg-white/95 p-8 shadow-2xl space-y-6"
            >
-              <div className="flex justify-between items-center border-b border-black/5 pb-6">
-                 <h3 className="text-xl font-black tracking-tighter italic uppercase text-[#1a3a2a]">Historical Analysis</h3>
-                 <div className="h-2.5 w-2.5 bg-red-500 rounded-full animate-pulse"></div>
+              <div className="flex justify-between items-center border-b border-black/5 pb-4">
+                 <h3 className="text-lg font-black tracking-tighter italic uppercase text-[#1a3a2a]">Historical Analysis</h3>
+                 <div className="h-2 w-2 bg-red-500 rounded-full animate-pulse"></div>
               </div>
               
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {recentDetections.map((d, i) => (
                   <div key={i} className="flex gap-5 group cursor-pointer hover:bg-[#f2f6f3] p-3 rounded-2xl transition-all">
                      <div className="bg-white p-3 rounded-xl shadow-sm border border-black/5 h-16 w-16 flex items-center justify-center relative overflow-hidden shrink-0 group-hover:bg-emerald-50 transition">

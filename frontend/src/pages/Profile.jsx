@@ -88,30 +88,30 @@ const Profile = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-[#051109] text-[#1a3a2a] p-10 font-sans overflow-y-auto no-scrollbar">
+    <div className="relative min-h-screen w-full bg-[#051109] text-[#1a3a2a] p-6 font-sans overflow-y-auto no-scrollbar">
       <div className="fixed inset-0 z-0 topo-pattern opacity-10 pointer-events-none" />
 
       <Motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="relative z-10 mb-12"
+        className="relative z-10 mb-8"
       >
-        <h1 className="text-5xl font-black tracking-tighter text-white uppercase italic">Profile Center</h1>
-        <p className="text-[#a3b8ad] text-[10px] font-black uppercase tracking-[0.4em] opacity-40 mt-3">Account Identity and Security Controls</p>
+        <h1 className="text-4xl font-black tracking-tighter text-white uppercase italic">Profile Center</h1>
+        <p className="text-[#a3b8ad] text-[9px] font-black uppercase tracking-[0.4em] opacity-40 mt-2">Account Identity and Security Controls</p>
       </Motion.header>
 
       {status.message ? (
-        <div className={`relative z-10 mb-8 p-4 rounded-2xl border text-xs font-black uppercase tracking-wider ${status.type === 'success' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-red-100 text-red-700 border-red-200'}`}>
+        <div className={`relative z-10 mb-6 p-3 rounded-2xl border text-xs font-black uppercase tracking-wider ${status.type === 'success' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-red-100 text-red-700 border-red-200'}`}>
           {status.message}
         </div>
       ) : null}
 
-      <div className="relative z-10 grid grid-cols-12 gap-8 pb-20">
+      <div className="relative z-10 grid grid-cols-12 gap-6 pb-12">
         <Motion.form
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           onSubmit={onProfileSubmit}
-          className="col-span-12 xl:col-span-6 glass-card !bg-white/95 p-10 space-y-8"
+          className="col-span-12 xl:col-span-6 glass-card !bg-white/95 p-8 space-y-6"
         >
           <div className="flex items-center gap-3">
             <UserRound className="w-6 h-6 text-[#1a3a2a]" />
@@ -156,7 +156,7 @@ const Profile = () => {
           initial={{ x: 20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           onSubmit={onPasswordSubmit}
-          className="col-span-12 xl:col-span-6 glass-card !bg-white/95 p-10 space-y-8"
+          className="col-span-12 xl:col-span-6 glass-card !bg-white/95 p-8 space-y-6"
         >
           <div className="flex items-center gap-3">
             <ShieldCheck className="w-6 h-6 text-[#1a3a2a]" />

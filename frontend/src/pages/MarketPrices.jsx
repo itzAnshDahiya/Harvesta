@@ -17,28 +17,28 @@ const MarketPrices = () => {
   ];
 
   return (
-    <div className="relative min-h-screen w-full bg-[#051109] text-[#1a3a2a] p-10 font-sans overflow-y-auto no-scrollbar">
+    <div className="relative min-h-screen w-full bg-[#051109] text-[#1a3a2a] p-6 font-sans overflow-y-auto no-scrollbar">
       <div className="fixed inset-0 z-0 topo-pattern opacity-10 pointer-events-none" />
 
          <Motion.header 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-end mb-16 gap-8"
+        className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-6"
       >
-        <div className="space-y-4 flex-1 min-w-0">
-          <div className="flex items-center gap-4 text-emerald-400 font-black text-[11px] tracking-[0.5em] uppercase opacity-60">
-             <Globe className="w-5 h-5" /> Global Commodity Terminal
+        <div className="space-y-3 flex-1 min-w-0">
+          <div className="flex items-center gap-3 text-emerald-400 font-black text-[10px] tracking-[0.5em] uppercase opacity-60">
+             <Globe className="w-4 h-4" /> Global Commodity Terminal
           </div>
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tighter text-white uppercase italic truncate">Market Exchange</h1>
-          <p className="text-[#a3b8ad] text-[10px] font-black uppercase tracking-[0.4em] opacity-40">Trading & Arbitrage Analytics</p>
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tighter text-white uppercase italic truncate">Market Exchange</h1>
+          <p className="text-[#a3b8ad] text-[9px] font-black uppercase tracking-[0.4em] opacity-40">Trading & Arbitrage Analytics</p>
         </div>
-        <div className="bg-[#1a3a2a] p-6 rounded-[2rem] border border-white/5 shadow-2xl flex flex-col items-center gap-2 group cursor-pointer hover:bg-emerald-900 transition-colors shrink-0">
-           <p className="text-[10px] font-black uppercase text-emerald-400 opacity-60">Total Portfolio</p>
-           <h3 className="text-2xl sm:text-3xl font-black text-white">$142,480</h3>
+        <div className="bg-[#1a3a2a] p-5 rounded-2xl border border-white/5 shadow-2xl flex flex-col items-center gap-1 group cursor-pointer hover:bg-emerald-900 transition-colors shrink-0">
+           <p className="text-[9px] font-black uppercase text-emerald-400 opacity-60">Total Portfolio</p>
+           <h3 className="text-xl font-black text-white">$142,480</h3>
         </div>
       </Motion.header>
 
-      <div className="relative z-10 grid grid-cols-12 gap-8 items-start pb-20">
+      <div className="relative z-10 grid grid-cols-12 gap-6 items-start pb-12">
         
         {/* Main Terminal Area */}
         <div className="col-span-12 xl:col-span-8 flex flex-col gap-8">

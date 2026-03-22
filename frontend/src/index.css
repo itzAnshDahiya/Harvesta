@@ -10,11 +10,11 @@
 
 @layer components {
   .glass-card {
-    @apply bg-white border border-white/20 shadow-2xl rounded-[3rem] transition-all duration-500;
+    @apply bg-white border border-white/20 shadow-2xl rounded-2xl transition-all duration-500;
   }
 
   .sidebar-link {
-    @apply flex items-center gap-3 px-8 py-5 rounded-full transition-all duration-300 font-bold text-[#a3b8ad] uppercase tracking-widest text-[11px];
+    @apply flex items-center gap-3 px-5 py-3 rounded-xl transition-all duration-300 font-bold text-[#a3b8ad] uppercase tracking-widest text-[9px];
   }
 
   .sidebar-link.active {

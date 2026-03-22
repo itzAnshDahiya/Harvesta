@@ -206,7 +206,7 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="mt-6 pt-4 border-t border-black/5 flex justify-between items-center text-[8px] font-black text-[#3e5a4a] tracking-widest uppercase opacity-40">
+        <div className="mt-6 pt-4 border-t border-black/5 flex justify-between items-center text-[9px] font-black text-[#3e5a4a] tracking-widest uppercase opacity-50">
            <span>v1.2.48 ACTIVE</span>
            <span>SECURE AES-256</span>
         </div>

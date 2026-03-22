@@ -11,53 +11,53 @@ const Inventory = () => {
   ];
 
   return (
-    <div className="relative min-h-screen w-full bg-[#051109] text-[#1a3a2a] p-10 font-sans overflow-y-auto no-scrollbar">
+    <div className="relative min-h-screen w-full bg-[#051109] text-[#1a3a2a] p-6 font-sans overflow-y-auto no-scrollbar">
       <div className="fixed inset-0 z-0 topo-pattern opacity-10 pointer-events-none" />
 
          <Motion.header 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center mb-16 gap-6"
+        className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-6"
       >
-        <div className="space-y-4">
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-white uppercase italic leading-none">Inventory Control</h1>
-          <p className="text-[#a3b8ad] text-xs font-black uppercase tracking-[0.4em] opacity-40">Asset & Stock Management System</p>
+        <div className="space-y-3">
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tighter text-white uppercase italic leading-none">Inventory Control</h1>
+          <p className="text-[#a3b8ad] text-[9px] font-black uppercase tracking-[0.4em] opacity-40">Asset & Stock Management System</p>
         </div>
-        <button className="bg-emerald-500 hover:bg-emerald-400 text-[#0b1e15] py-4 px-10 rounded-full font-black uppercase text-xs tracking-widest shadow-2xl transition-all hover:scale-105 flex items-center gap-3">
-          <Plus className="w-5 h-5" /> Register New Asset
+        <button className="bg-emerald-500 hover:bg-emerald-400 text-[#0b1e15] py-3 px-8 rounded-full font-black uppercase text-[9px] tracking-widest shadow-2xl transition-all hover:scale-105 flex items-center gap-2">
+          <Plus className="w-4 h-4" /> Register New Asset
         </button>
       </Motion.header>
 
-      <div className="relative z-10 grid grid-cols-12 gap-8 items-start pb-20">
+      <div className="relative z-10 grid grid-cols-12 gap-6 items-start pb-12">
         
         {/* Left Stats Block */}
-        <div className="col-span-12 lg:col-span-4 space-y-8">
+        <div className="col-span-12 lg:col-span-4 space-y-6">
                 <Motion.div 
              initial={{ x: -50, opacity: 0 }}
              animate={{ x: 0, opacity: 1 }}
-             className="glass-card !bg-white/95 p-12 shadow-2xl !rounded-[3rem]"
+             className="glass-card !bg-white/95 p-8 shadow-2xl !rounded-2xl"
            >
-              <div className="relative mb-12">
-                 <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3e5a4a] opacity-40" />
+              <div className="relative mb-8">
+                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#3e5a4a] opacity-40" />
                  <input 
                    type="text" 
                    placeholder="SEARCH ASSET" 
-                   className="w-full bg-[#f2f6f3] border-none rounded-2xl py-4 pl-16 pr-6 text-[10px] font-black uppercase tracking-widest focus:ring-2 focus:ring-emerald-500 outline-none"
+                   className="w-full bg-[#f2f6f3] border-none rounded-2xl py-3 pl-12 pr-4 text-[9px] font-black uppercase tracking-widest focus:ring-2 focus:ring-emerald-500 outline-none"
                  />
               </div>
 
-              <div className="space-y-8">
-                 <p className="text-[11px] font-black uppercase text-[#3e5a4a] opacity-40 tracking-[0.4em] border-b border-black/5 pb-4">Real-time Stock Health</p>
-                 <div className="flex gap-4">
-                    <div className="flex-1 bg-emerald-50 p-8 rounded-3xl border border-emerald-100 flex flex-col items-center gap-2">
-                       <Package className="w-8 h-8 text-emerald-600 mb-2" />
-                       <span className="text-3xl font-black text-[#1a3a2a]">1,420</span>
-                       <span className="text-[9px] font-black uppercase text-emerald-700">Active SKU</span>
+              <div className="space-y-6">
+                 <p className="text-[9px] font-black uppercase text-[#3e5a4a] opacity-40 tracking-[0.4em] border-b border-black/5 pb-3">Real-time Stock Health</p>
+                 <div className="flex gap-3">
+                    <div className="flex-1 bg-emerald-50 p-6 rounded-2xl border border-emerald-100 flex flex-col items-center gap-2">
+                       <Package className="w-6 h-6 text-emerald-600 mb-1" />
+                       <span className="text-2xl font-black text-[#1a3a2a]">1,420</span>
+                       <span className="text-[8px] font-black uppercase text-emerald-700">Active SKU</span>
                     </div>
-                    <div className="flex-1 bg-orange-50 p-8 rounded-3xl border border-orange-100 flex flex-col items-center gap-2">
-                       <Filter className="w-8 h-8 text-orange-600 mb-2" />
-                       <span className="text-3xl font-black text-[#1a3a2a]">12</span>
-                       <span className="text-[9px] font-black uppercase text-orange-700">Low Stock</span>
+                    <div className="flex-1 bg-orange-50 p-6 rounded-2xl border border-orange-100 flex flex-col items-center gap-2">
+                       <Filter className="w-6 h-6 text-orange-600 mb-1" />
+                       <span className="text-2xl font-black text-[#1a3a2a]">12</span>
+                       <span className="text-[8px] font-black uppercase text-orange-700">Low Stock</span>
                     </div>
                  </div>
               </div>
@@ -65,20 +65,20 @@ const Inventory = () => {
         </div>
 
         {/* Assets table */}
-        <div className="col-span-12 lg:col-span-8 flex flex-col gap-8">
+        <div className="col-span-12 lg:col-span-8 flex flex-col gap-6">
                 <Motion.div 
              initial={{ scale: 0.95, opacity: 0 }}
              animate={{ scale: 1, opacity: 1 }}
-             className="glass-card !bg-white/95 p-10 sm:p-12 shadow-2xl !rounded-[3rem]"
+             className="glass-card !bg-white/95 p-8 shadow-2xl !rounded-2xl"
            >
-              <div className="flex justify-between items-center mb-12">
-                 <h2 className="text-3xl font-black text-[#1a3a2a] uppercase italic tracking-tighter">Current Stock Assets</h2>
-                 <div className="bg-[#f2f6f3] py-3 px-8 rounded-2xl text-[10px] font-black flex items-center gap-3 border border-black/5 text-[#1a3a2a] cursor-pointer hover:bg-white transition shadow-sm">
-                    <Filter className="w-4 h-4" /> <span>FILTER BY: CATEGORY</span>
+              <div className="flex justify-between items-center mb-8">
+                 <h2 className="text-2xl font-black text-[#1a3a2a] uppercase italic tracking-tighter">Current Stock Assets</h2>
+                 <div className="bg-[#f2f6f3] py-2 px-6 rounded-2xl text-[9px] font-black flex items-center gap-2 border border-black/5 text-[#1a3a2a] cursor-pointer hover:bg-white transition shadow-sm">
+                    <Filter className="w-3 h-3" /> <span>FILTER BY: CATEGORY</span>
                  </div>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-4">
                  {inventoryItems.map((item, i) => (
                    <div key={i} className="flex flex-col sm:flex-row justify-between items-center group cursor-pointer p-6 hover:bg-[#f2f6f3] rounded-[2.5rem] transition-all border border-transparent hover:border-black/5 gap-8">
                       <div className="flex items-center gap-8 flex-1 min-w-0">

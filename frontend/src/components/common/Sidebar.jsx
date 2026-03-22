@@ -40,42 +40,42 @@ const Sidebar = () => {
       </div>
 
       {/* 2. LAYER 2: NAVIGATION CATEGORIES */}
-      <div className="flex-1 overflow-y-auto no-scrollbar pr-2 space-y-10">
+      <div className="flex-1 overflow-y-auto no-scrollbar pr-2 space-y-8">
         
-        <div className="space-y-3">
-          <p className="text-[#3e5a4a] text-[9px] font-black uppercase tracking-[0.4em] mb-6 pl-4 opacity-40">Management Center</p>
-          <div className="space-y-2">
+        <div className="space-y-2">
+          <p className="text-[#3e5a4a] text-[8px] font-black uppercase tracking-[0.4em] mb-4 pl-4 opacity-40">Management Center</p>
+          <div className="space-y-1.5">
             {navItems.map((item) => (
               <NavLink
                 key={item.name}
                 to={item.path}
                 className={({ isActive }) =>
-                  `group sidebar-link !px-6 !py-4 ${isActive ? 'active' : 'hover:bg-emerald-950/40 hover:text-emerald-50'}`
+                  `group sidebar-link !px-5 !py-3 ${isActive ? 'active' : 'hover:bg-emerald-950/40 hover:text-emerald-50'}`
                 }
               >
-                <div className="flex items-center gap-4 flex-1">
+                <div className="flex items-center gap-3 flex-1">
                   <item.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="tracking-[0.15em] font-black text-[10px]">{item.name}</span>
+                  <span className="tracking-[0.15em] font-black text-[9px]">{item.name}</span>
                 </div>
               </NavLink>
             ))}
           </div>
         </div>
 
-        <div className="space-y-4">
-          <p className="text-[#3e5a4a] text-[10px] font-black uppercase tracking-[0.4em] mb-8 pl-6 opacity-40">Professional Modules</p>
-          <div className="space-y-3">
+        <div className="space-y-3">
+          <p className="text-[#3e5a4a] text-[8px] font-black uppercase tracking-[0.4em] mb-4 pl-4 opacity-40">Professional Modules</p>
+          <div className="space-y-2">
             {subItems.map((item) => (
               <NavLink
                 key={item.name}
                 to={item.path}
                 className={({ isActive }) =>
-                  `group sidebar-link ${isActive ? 'active' : 'hover:bg-emerald-950/40 hover:text-emerald-50'}`
+                  `group sidebar-link !px-5 !py-3 ${isActive ? 'active' : 'hover:bg-emerald-950/40 hover:text-emerald-50'}`
                 }
               >
-                <div className="flex items-center gap-5 pl-4">
-                  <item.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  <span className="tracking-[0.2em] font-black">{item.name}</span>
+                <div className="flex items-center gap-4 pl-2">
+                  <item.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <span className="tracking-[0.15em] font-black text-[9px] uppercase">{item.name}</span>
                 </div>
               </NavLink>
             ))}
@@ -84,19 +84,19 @@ const Sidebar = () => {
       </div>
 
       {/* 3. LAYER 3: PREMUIM PROFILE & CONNECTIVITY (BOTTOM) */}
-      <div className="mt-auto pt-10 border-t border-white/5">
-        <div className="glass-card !bg-[#152e22]/30 !rounded-[2.5rem] p-6 border border-white/5 hover:!bg-[#152e22]/50 transition-all cursor-pointer group flex items-center justify-between">
-            <div className="flex items-center gap-5">
+      <div className="mt-auto pt-8 border-t border-white/5">
+        <div className="glass-card !bg-[#152e22]/30 !rounded-2xl p-5 border border-white/5 hover:!bg-[#152e22]/50 transition-all cursor-pointer group flex items-center justify-between">
+            <div className="flex items-center gap-4">
                <div className="relative">
                  <img 
                     src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop" 
                     alt="Premium User" 
-                    className="w-14 h-14 rounded-[1.5rem] object-cover border-2 border-emerald-500/20 group-hover:border-emerald-400 transition-colors shadow-lg"
+                    className="w-12 h-12 rounded-xl object-cover border-2 border-emerald-500/20 group-hover:border-emerald-400 transition-colors shadow-lg"
                  />
-                 <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-[#0b1e15] shadow-lg animate-pulse"></div>
+                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0b1e15] shadow-lg animate-pulse"></div>
                </div>
                <div className="flex flex-col">
-                  <p className="font-black text-white text-sm tracking-tight uppercase italic underline underline-offset-4 decoration-emerald-500/30">
+                  <p className="font-black text-white text-xs tracking-tight uppercase italic underline underline-offset-2 decoration-emerald-500/30">
                     {user?.name || 'Harvesta User'}
                   </p>
                   <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mt-1 truncate max-w-[145px]">
