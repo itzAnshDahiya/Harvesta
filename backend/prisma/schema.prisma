@@ -13,7 +13,11 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
-  fields    Field[]
+
+  fields         Field[]
+  inventoryItems InventoryItem[]
+  forumPosts     ForumPost[]
+  forumComments  ForumComment[]
 }
 
 model Field {
@@ -23,6 +27,8 @@ model Field {
   latitude     Float
   longitude    Float
   sizeHectares Float
+  soilType     String   @default("Loam")
+  status       String   @default("active")
   createdAt    DateTime @default(now())
 
   user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -33,8 +39,51 @@ model Crop {
   id        String   @id @default(uuid())
   fieldId   String
   name      String
-  stage     String?
+  variety   String?
+  stage     String   @default("Planted")
+  plantedAt DateTime @default(now())
   createdAt DateTime @default(now())
 
   field Field @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+}
+
+model InventoryItem {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  category  String
+  quantity  Float
+  unit      String
+  minStock  Float    @default(0)
+  cost      Float    @default(0)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ForumPost {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  content   String
+  category  String   @default("General")
+  likes     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments ForumComment[]
+}
+
+model ForumComment {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  post ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

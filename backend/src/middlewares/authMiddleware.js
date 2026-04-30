@@ -1,8 +1,7 @@
 const jwt = require('jsonwebtoken');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const db = require('../db');
 
-exports.protect = async (req, res, next) => {
+exports.protect = (req, res, next) => {
   let token;
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
@@ -14,15 +13,13 @@ exports.protect = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await prisma.user.findUnique({
-      where: { id: decoded.id },
-      select: { id: true, name: true, email: true }
-    });
+    const user = db.prepare('SELECT id, name, email FROM users WHERE id = ?').get(decoded.id);
 
-    if (!req.user) {
+    if (!user) {
       return res.status(401).json({ success: false, message: 'Not authorized, user not found' });
     }
 
+    req.user = user;
     next();
   } catch (error) {
     res.status(401).json({ success: false, message: 'Not authorized, token failed' });
