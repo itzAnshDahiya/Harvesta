@@ -1,87 +1,46 @@
-const db = require('../db');
-const { v4: uuidv4 } = require('uuid');
+const Field = require('../models/Field');
 
-exports.getFieldsByUser = (req, res) => {
+exports.getFieldsByUser = async (req, res) => {
   try {
-    const fields = db.prepare('SELECT * FROM fields WHERE user_id = ? ORDER BY created_at DESC').all(req.user.id);
-
-    // Attach crops to each field
-    const getCrops = db.prepare('SELECT * FROM crops WHERE field_id = ?');
-    const result = fields.map((f) => ({
-      ...f,
-      crops: getCrops.all(f.id),
-    }));
-
-    res.status(200).json({ success: true, data: result });
+    const fields = await Field.find({ user: req.user._id }).sort('-createdAt');
+    res.json({ success: true, data: fields });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to fetch fields' });
   }
 };
 
-exports.createField = (req, res) => {
+exports.createField = async (req, res) => {
   try {
     const { name, latitude, longitude, sizeHectares, soilType } = req.body;
-
-    if (!name || latitude === undefined || longitude === undefined || sizeHectares === undefined) {
-      return res.status(400).json({
-        success: false,
-        message: 'Name, latitude, longitude and sizeHectares are required',
-      });
+    if (!name || latitude == null || longitude == null || sizeHectares == null) {
+      return res.status(400).json({ success: false, message: 'name, latitude, longitude, sizeHectares required' });
     }
-
-    const lat = Number(latitude);
-    const lon = Number(longitude);
-    const size = Number(sizeHectares);
-
-    if ([lat, lon, size].some(Number.isNaN)) {
-      return res.status(400).json({
-        success: false,
-        message: 'latitude, longitude and sizeHectares must be valid numbers',
-      });
-    }
-
-    const id = uuidv4();
-    db.prepare(
-      'INSERT INTO fields (id, user_id, name, latitude, longitude, size_hectares, soil_type) VALUES (?, ?, ?, ?, ?, ?, ?)'
-    ).run(id, req.user.id, name, lat, lon, size, soilType || 'Loam');
-
-    const field = db.prepare('SELECT * FROM fields WHERE id = ?').get(id);
-    res.status(201).json({ success: true, data: { ...field, crops: [] } });
+    const field = await Field.create({ user: req.user._id, name, latitude: +latitude, longitude: +longitude, sizeHectares: +sizeHectares, soilType: soilType || 'Loam' });
+    res.status(201).json({ success: true, data: field });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Failed to create field', error: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-exports.deleteField = (req, res) => {
+exports.deleteField = async (req, res) => {
   try {
-    const { id } = req.params;
-    const field = db.prepare('SELECT * FROM fields WHERE id = ? AND user_id = ?').get(id, req.user.id);
+    const field = await Field.findOneAndDelete({ _id: req.params.id, user: req.user._id });
     if (!field) return res.status(404).json({ success: false, message: 'Field not found' });
-
-    db.prepare('DELETE FROM fields WHERE id = ?').run(id);
     res.json({ success: true, message: 'Field deleted' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-exports.addCrop = (req, res) => {
+exports.addCrop = async (req, res) => {
   try {
-    const { fieldId } = req.params;
     const { name, variety, stage } = req.body;
-
-    if (!name) return res.status(400).json({ success: false, message: 'Crop name is required' });
-
-    const field = db.prepare('SELECT * FROM fields WHERE id = ? AND user_id = ?').get(fieldId, req.user.id);
+    if (!name) return res.status(400).json({ success: false, message: 'Crop name required' });
+    const field = await Field.findOne({ _id: req.params.fieldId, user: req.user._id });
     if (!field) return res.status(404).json({ success: false, message: 'Field not found' });
-
-    const id = uuidv4();
-    db.prepare('INSERT INTO crops (id, field_id, name, variety, stage) VALUES (?, ?, ?, ?, ?)').run(
-      id, fieldId, name, variety || null, stage || 'Planted'
-    );
-
-    const crop = db.prepare('SELECT * FROM crops WHERE id = ?').get(id);
-    res.status(201).json({ success: true, data: crop });
+    field.crops.push({ name, variety: variety || '', stage: stage || 'Planted' });
+    await field.save();
+    res.status(201).json({ success: true, data: field });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

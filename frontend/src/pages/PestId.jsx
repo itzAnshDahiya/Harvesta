@@ -1,139 +1,185 @@
 import React from 'react';
 import { motion as Motion } from 'framer-motion';
-import { Bug, Camera, Zap, ShieldAlert, Eye } from 'lucide-react';
+import { Bug, Upload, Scan, AlertTriangle, CheckCircle2, Shield, Leaf, Zap, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
+import api from '../lib/api';
 
-const PestId = () => {
-  const recentDetections = [
-    { name: 'Downy Mildew (Lettuce)', confidence: '99.4%', status: 'Infected', action: 'Immediate fungicide needed' },
-    { name: 'Common Aphid', confidence: '82.1%', status: 'Minor', action: 'Biocontrol release recommended' },
-    { name: 'Tomato Early Blight', confidence: '94.2%', status: 'Warning', action: 'Isolate affected rows' },
-  ];
+const anim = (d = 0) => ({ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { delay: d, duration: 0.5, ease: [0.16,1,0.3,1] } });
+const severityColors = { None: '#4ade80', Low: '#facc15', Medium: '#fb923c', High: '#f87171', Critical: '#ef4444' };
+
+export default function PestId() {
+  const [scanning, setScanning] = React.useState(false);
+  const [result, setResult] = React.useState(null);
+  const [database, setDatabase] = React.useState([]);
+  const [showDb, setShowDb] = React.useState(false);
+  const [expandedSections, setExpanded] = React.useState({ symptoms: true, treatment: true, prevention: false });
+
+  React.useEffect(() => {
+    api.get('/pest/database').then(({ data }) => setDatabase(data.data)).catch(() => {});
+  }, []);
+
+  const handleScan = async () => {
+    setScanning(true); setResult(null);
+    try {
+      const { data } = await api.post('/pest/identify', {});
+      setResult(data.data);
+    } catch {} finally { setScanning(false); }
+  };
+
+  const toggle = (key) => setExpanded((e) => ({ ...e, [key]: !e[key] }));
 
   return (
-    <div className="relative min-h-screen w-full bg-[#051109] text-[#1a3a2a] p-6 font-sans overflow-y-auto no-scrollbar">
-      <div className="fixed inset-0 z-0 topo-pattern opacity-10 pointer-events-none" />
-
-         <Motion.header 
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="relative z-10 flex flex-col gap-3 mb-8"
-      >
-         <div className="flex items-center gap-3 text-emerald-400 font-black text-[10px] tracking-[0.5em] uppercase opacity-60">
-            <Zap className="w-4 h-4" /> AI Diagnostic Neural Lab
-         </div>
-         <h1 className="text-3xl sm:text-5xl font-black tracking-tighter text-white uppercase italic leading-none">Pest & Pathogen Analysis</h1>
-         <p className="text-[#a3b8ad] text-[9px] font-black uppercase tracking-[0.4em] opacity-40">Automated Visual Recognition & Treatment Protocols</p>
-      </Motion.header>
-
-      <div className="relative z-10 grid grid-cols-12 gap-6 items-start pb-12">
-        
-        {/* Main Scanner Section */}
-        <div className="col-span-12 xl:col-span-7 flex flex-col gap-6">
-                <Motion.div 
-             initial={{ scale: 0.95, opacity: 0 }}
-             animate={{ scale: 1, opacity: 1 }}
-             className="glass-card !bg-white/95 p-8 shadow-[0_40px_100px_rgba(0,0,0,0.2)] flex flex-col"
-           >
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 border-b border-black/5 pb-6">
-                 <h2 className="text-xl font-black text-[#1a3a2a] uppercase italic tracking-tighter">Diagnostic Scanner</h2>
-                 <div className="bg-[#1a3a2a] py-2 px-5 rounded-2xl text-[8px] font-black text-white flex items-center gap-2 uppercase shadow-lg shrink-0">
-                    <ShieldAlert className="w-3 h-3 text-emerald-400" />
-                    <span>Model v3.04 (Active)</span>
-                 </div>
-              </div>
-              
-              <div className="flex-1 border-[3px] border-dashed border-[#1a3a2a]/10 rounded-[3rem] flex flex-col items-center justify-center p-10 sm:p-20 bg-[#f8faf8] group hover:border-emerald-500/40 transition-all cursor-pointer relative overflow-hidden">
-                 <div className="absolute inset-0 bg-emerald-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                 <div className="relative z-10 flex flex-col items-center gap-6">
-                    <div className="bg-[#1a3a2a] p-8 rounded-full text-white shadow-2xl group-hover:scale-110 transition-transform">
-                       <Camera className="w-12 h-12" />
-                    </div>
-                    <div className="text-center space-y-2">
-                       <h3 className="text-xl sm:text-2xl font-black text-[#1a3a2a] uppercase italic tracking-tighter">Drag Field Image Here</h3>
-                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#3e5a4a] opacity-40 leading-relaxed max-w-sm mx-auto">Upload a high-resolution macro shot for deep neural analysis.</p>
-                    </div>
-                    <button className="bg-[#1a3a2a] text-white py-4 px-12 rounded-full font-black uppercase text-[10px] tracking-widest shadow-2xl hover:bg-emerald-900 transition-colors">Select From Cloud Drive</button>
-                 </div>
-                 <Motion.div 
-                    animate={{ y: ['100%', '-100%'] }} 
-                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-x-0 h-1 bg-emerald-500/30 blur-[4px] pointer-events-none z-20 group-hover:opacity-100 opacity-0"
-                 />
-              </div>
-
-              <div className="grid grid-cols-3 gap-8 mt-16 pt-10 border-t border-black/5 text-center">
-                 <div>
-                    <p className="text-[10px] font-black uppercase text-[#3e5a4a] opacity-40 mb-2 tracking-widest">Model Precision</p>
-                    <p className="text-xl sm:text-3xl font-black text-[#1a3a2a] italic lowercase tracking-tighter">99.8%</p>
-                 </div>
-                 <div>
-                    <p className="text-[10px] font-black uppercase text-[#3e5a4a] opacity-40 mb-2 tracking-widest">Latency</p>
-                    <p className="text-xl sm:text-3xl font-black text-[#1a3a2a] italic lowercase tracking-tighter">142ms</p>
-                 </div>
-                 <div>
-                    <p className="text-[10px] font-black uppercase text-[#3e5a4a] opacity-40 mb-2 tracking-widest">Species</p>
-                    <p className="text-xl sm:text-3xl font-black text-[#1a3a2a] italic lowercase tracking-tighter">14k</p>
-                 </div>
-              </div>
-           </Motion.div>
+    <div className="p-6 space-y-6 min-h-screen">
+      <Motion.div {...anim(0)} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>AI Pest Identification</h1>
+          <p className="text-sm text-emerald-400/50 mt-1">Powered by deep learning analysis</p>
         </div>
+        <button onClick={() => setShowDb(!showDb)}
+          className="px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 transition-all text-emerald-400/60 hover:text-emerald-400"
+          style={{ background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.1)' }}>
+          <BookOpen className="w-4 h-4" /> Pest Database
+        </button>
+      </Motion.div>
 
-        {/* Right Sidebar Block: Recent Detections */}
-        <div className="col-span-12 xl:col-span-5 flex flex-col gap-6">
-                <Motion.div 
-             initial={{ x: 50, opacity: 0 }}
-             animate={{ x: 0, opacity: 1 }}
-             className="glass-card !bg-white/95 p-8 shadow-2xl space-y-6"
-           >
-              <div className="flex justify-between items-center border-b border-black/5 pb-4">
-                 <h3 className="text-lg font-black tracking-tighter italic uppercase text-[#1a3a2a]">Historical Analysis</h3>
-                 <div className="h-2 w-2 bg-red-500 rounded-full animate-pulse"></div>
-              </div>
-              
-              <div className="space-y-4">
-                {recentDetections.map((d, i) => (
-                  <div key={i} className="flex gap-5 group cursor-pointer hover:bg-[#f2f6f3] p-3 rounded-2xl transition-all">
-                     <div className="bg-white p-3 rounded-xl shadow-sm border border-black/5 h-16 w-16 flex items-center justify-center relative overflow-hidden shrink-0 group-hover:bg-emerald-50 transition">
-                        <Bug className={`w-8 h-8 ${d.status === 'Infected' ? 'text-red-600' : 'text-orange-500'}`} />
-                     </div>
-                     <div className="flex-1 space-y-0.5 border-r border-black/5 pr-4 min-w-0">
-                        <div className="flex justify-between items-start gap-2">
-                          <p className="text-base font-black text-[#1a3a2a] italic tracking-tighter uppercase truncate">{d.name}</p>
-                          <span className={`text-[8px] font-black uppercase shrink-0 py-0.5 px-2 rounded-full border ${d.status === 'Infected' ? 'text-red-600 border-red-100 bg-red-50' : 'text-orange-600 border-orange-100 bg-orange-50'}`}>{d.status}</span>
-                        </div>
-                        <p className="text-[9px] font-black uppercase tracking-widest text-[#3e5a4a] opacity-40 mb-2 truncate">Confidence: {d.confidence}</p>
-                        <p className="text-[10px] font-bold text-[#1a3a2a]/60 leading-tight uppercase line-clamp-2">{d.action}</p>
-                     </div>
+      <div className="grid grid-cols-12 gap-6">
+        {/* Upload / Scan Area */}
+        <Motion.div {...anim(0.1)} className="col-span-12 lg:col-span-5">
+          <div className="glass-card p-8 text-center space-y-6">
+            <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-emerald-500/20 to-green-700/10 flex items-center justify-center border border-emerald-500/10">
+              {scanning ? (
+                <div className="w-10 h-10 border-2 border-emerald-400/20 border-t-emerald-400 rounded-full animate-spin" />
+              ) : (
+                <Bug className="w-10 h-10 text-emerald-400/60" />
+              )}
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-white">
+                {scanning ? 'Analyzing...' : result ? 'Scan Complete' : 'Upload Plant Image'}
+              </h2>
+              <p className="text-xs text-emerald-400/40 mt-1">
+                {scanning ? 'AI is processing your sample' : 'Take a photo or upload an image of your crop'}
+              </p>
+            </div>
+
+            {/* Drop Zone */}
+            <div className="border-2 border-dashed rounded-2xl p-8 transition-colors hover:border-emerald-400/20 cursor-pointer"
+              style={{ borderColor: 'rgba(74,222,128,0.08)', background: 'rgba(10,30,20,0.3)' }}>
+              <Upload className="w-8 h-8 text-emerald-400/20 mx-auto mb-3" />
+              <p className="text-xs text-emerald-400/30">Drag & drop or click to upload</p>
+              <p className="text-[10px] text-emerald-400/20 mt-1">JPG, PNG up to 10MB</p>
+            </div>
+
+            <button onClick={handleScan} disabled={scanning}
+              className="btn-glow w-full py-3.5 rounded-xl text-white text-sm flex items-center justify-center gap-2">
+              <Scan className="w-4 h-4" />
+              {scanning ? 'Scanning...' : 'Run AI Analysis'}
+            </button>
+
+            <div className="flex justify-center gap-6 text-[10px] text-emerald-400/25">
+              <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> 96% Accuracy</span>
+              <span className="flex items-center gap-1"><Zap className="w-3 h-3" /> {'<'}1s Response</span>
+            </div>
+          </div>
+        </Motion.div>
+
+        {/* Results */}
+        <div className="col-span-12 lg:col-span-7 space-y-4">
+          {result ? (
+            <>
+              {/* Main Result Card */}
+              <Motion.div {...anim(0.15)} className="glass-card p-6 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-[80px] opacity-20 pointer-events-none"
+                  style={{ background: severityColors[result.severity] }} />
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"
+                    style={{ background: `${severityColors[result.severity]}15` }}>
+                    {result.severity === 'None'
+                      ? <CheckCircle2 className="w-7 h-7" style={{ color: severityColors[result.severity] }} />
+                      : <AlertTriangle className="w-7 h-7" style={{ color: severityColors[result.severity] }} />}
                   </div>
-                ))}
-              </div>
-           </Motion.div>
-
-           <Motion.div 
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="glass-card !bg-[#0b1e15] p-10 shadow-2xl overflow-hidden relative group"
-           >
-              <div className="flex justify-between items-start text-white relative z-10">
-                 <div className="space-y-4">
-                    <h3 className="text-2xl font-black uppercase italic tracking-tighter leading-none">Grid Health Check</h3>
-                    <div className="flex items-center gap-4">
-                       <div className="bg-[#1a3a2a] p-3 rounded-xl shadow-xl flex items-center justify-center border border-white/5">
-                          <Eye className="w-6 h-6 text-emerald-400" />
-                       </div>
-                       <p className="text-[10px] font-black uppercase tracking-widest text-emerald-100/60 max-w-[150px] leading-relaxed italic border-l border-white/5 pl-4">All visual nodes report zero biological anomalies.</p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-bold text-white">{result.name}</h3>
+                    <p className="text-xs text-emerald-400/40 italic">{result.scientificName}</p>
+                    <div className="flex items-center gap-3 mt-2">
+                      <span className="badge text-[10px]" style={{ background: `${severityColors[result.severity]}15`, color: severityColors[result.severity] }}>
+                        {result.severity} Severity
+                      </span>
+                      <span className="badge-green text-[10px]">{result.confidence}% Confidence</span>
                     </div>
-                 </div>
-              </div>
-              <div className="absolute -right-8 -bottom-8 opacity-5 group-hover:scale-110 transition-transform duration-1000">
-                <ShieldAlert className="w-32 h-32 text-emerald-500" />
-              </div>
+                  </div>
+                </div>
+                <p className="text-sm text-emerald-400/50 mt-4 leading-relaxed">{result.description}</p>
+                <div className="text-[10px] text-emerald-400/20 mt-3">Analyzed in {result.processingTimeMs}ms</div>
+              </Motion.div>
+
+              {/* Expandable Sections */}
+              {[
+                { key: 'symptoms', title: 'Symptoms', items: result.symptoms, color: '#fb923c' },
+                { key: 'treatment', title: 'Treatment', items: result.treatment, color: '#4ade80' },
+                { key: 'prevention', title: 'Prevention', items: result.prevention, color: '#22d3ee' },
+              ].map((section) => section.items?.length > 0 && (
+                <Motion.div key={section.key} {...anim(0.2)} className="glass-card overflow-hidden">
+                  <button onClick={() => toggle(section.key)} className="w-full flex items-center justify-between p-4 text-left">
+                    <span className="text-sm font-semibold text-white">{section.title}</span>
+                    {expandedSections[section.key] ? <ChevronUp className="w-4 h-4 text-emerald-400/40" /> : <ChevronDown className="w-4 h-4 text-emerald-400/40" />}
+                  </button>
+                  {expandedSections[section.key] && (
+                    <div className="px-4 pb-4 space-y-2">
+                      {section.items.map((item, idx) => (
+                        <div key={idx} className="flex items-start gap-2 text-sm text-emerald-400/50">
+                          <div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: section.color }} />
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </Motion.div>
+              ))}
+
+              {/* Affected Crops */}
+              {result.affectedCrops?.length > 0 && (
+                <Motion.div {...anim(0.25)} className="glass-card p-4">
+                  <p className="text-xs font-semibold text-white mb-2">Affected Crops</p>
+                  <div className="flex gap-2 flex-wrap">
+                    {result.affectedCrops.map((c) => (
+                      <span key={c} className="badge-yellow text-[10px]"><Leaf className="w-2.5 h-2.5 mr-0.5" />{c}</span>
+                    ))}
+                  </div>
+                </Motion.div>
+              )}
+            </>
+          ) : (
+            <Motion.div {...anim(0.15)} className="glass-card p-12 text-center">
+              <Scan className="w-16 h-16 text-emerald-400/10 mx-auto mb-4" />
+              <h3 className="text-white font-semibold">Ready to Analyze</h3>
+              <p className="text-sm text-emerald-400/40 mt-1">Upload an image and run AI analysis to identify pests and diseases</p>
+            </Motion.div>
+          )}
         </div>
       </div>
+
+      {/* Pest Database */}
+      {showDb && database.length > 0 && (
+        <Motion.div {...anim(0)} className="glass-card p-6">
+          <h3 className="text-base font-semibold text-white mb-4">Known Pest Database</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+            {database.map((p) => (
+              <div key={p.id} className="p-4 rounded-xl" style={{ background: 'rgba(10,30,20,0.4)', border: '1px solid rgba(74,222,128,0.06)' }}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-semibold text-white">{p.name}</span>
+                  <span className="badge text-[9px]" style={{ background: `${severityColors[p.severity]}15`, color: severityColors[p.severity] }}>{p.severity}</span>
+                </div>
+                <p className="text-[10px] text-emerald-400/30 italic">{p.scientificName}</p>
+                {p.affectedCrops?.length > 0 && (
+                  <div className="flex gap-1 mt-2 flex-wrap">
+                    {p.affectedCrops.map(c => <span key={c} className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: 'rgba(74,222,128,0.06)', color: 'rgba(74,222,128,0.4)' }}>{c}</span>)}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </Motion.div>
+      )}
     </div>
   );
-};
-
-export default PestId;
+}

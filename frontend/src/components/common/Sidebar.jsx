@@ -1,134 +1,111 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { 
-  BarChart2, Map, Clipboard, Settings, Bug, DollarSign, Users,
-  Leaf, ChevronRight, Monitor, LogOut
+import { motion as Motion, AnimatePresence } from 'framer-motion';
+import {
+  LayoutDashboard, Map, Package, TrendingUp, Users, Bug, User,
+  Leaf, LogOut, ChevronLeft, ChevronRight, Zap
 } from 'lucide-react';
 import useAuthStore from '../../store/authStore';
 
+const navItems = [
+  { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+  { name: 'My Fields', path: '/fields', icon: Map },
+  { name: 'Inventory', path: '/inventory', icon: Package },
+  { name: 'Market', path: '/market', icon: TrendingUp },
+  { name: 'Forum', path: '/forum', icon: Users },
+  { name: 'AI Pest ID', path: '/pest-id', icon: Bug },
+  { name: 'Profile', path: '/profile', icon: User },
+];
+
 const Sidebar = () => {
   const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
+  const [collapsed, setCollapsed] = React.useState(false);
 
-  const navItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: BarChart2 },
-    { name: 'My Fields', path: '/fields', icon: Map },
-    { name: 'Inventory', path: '/inventory', icon: Clipboard },
-    { name: 'Market', path: '/market', icon: DollarSign },
-    { name: 'Forum', path: '/forum', icon: Users },
-  ];
-
-  const subItems = [
-    { name: 'AI Pest ID', path: '/pest-id', icon: Bug },
-    { name: 'Profile', path: '/profile', icon: Monitor },
-  ];
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  const handleLogout = () => { logout(); navigate('/login'); };
 
   return (
-    <aside className="h-screen w-[280px] xl:w-[300px] min-w-[280px] bg-[#0b1e15] flex flex-col p-8 overflow-hidden relative z-50 shadow-[40px_0_100px_rgba(0,0,0,0.5)] border-r border-white/5 shrink-0">
-      {/* 1. LAYER 1: HARVESTA BRANDING (DITTO MOCKUP 1) */}
-      <div className="flex items-center gap-4 mb-12 px-2 group cursor-pointer">
-         <div className="bg-[#1a3a2a] p-3 rounded-2xl group-hover:bg-emerald-600 transition-all duration-500 shadow-xl border border-white/10 group-hover:-rotate-12">
-            <Leaf className="w-7 h-7 text-[#7be3a6] group-hover:text-white" />
-         </div>
-         <h1 className="text-2xl font-black tracking-tighter text-white group-hover:text-emerald-400 transition-colors uppercase italic">Harvesta</h1>
+    <Motion.aside
+      animate={{ width: collapsed ? 72 : 260 }}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      className="h-screen flex flex-col py-6 px-3 relative z-50 shrink-0 overflow-hidden border-r"
+      style={{ background: 'rgba(5,13,10,0.95)', borderColor: 'rgba(74,222,128,0.08)' }}
+    >
+      {/* Brand */}
+      <div className="flex items-center gap-3 px-2 mb-8">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-700 flex items-center justify-center shrink-0 shadow-lg shadow-green-900/30">
+          <Leaf className="w-5 h-5 text-white" />
+        </div>
+        <AnimatePresence>
+          {!collapsed && (
+            <Motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="text-lg font-bold tracking-tight text-white whitespace-nowrap"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
+              Harvesta
+            </Motion.span>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* 2. LAYER 2: NAVIGATION CATEGORIES */}
-      <div className="flex-1 overflow-y-auto no-scrollbar pr-2 space-y-8">
-        
-        <div className="space-y-2">
-          <p className="text-[#3e5a4a] text-[8px] font-black uppercase tracking-[0.4em] mb-4 pl-4 opacity-40">Management Center</p>
-          <div className="space-y-1.5">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.name}
-                to={item.path}
-                className={({ isActive }) =>
-                  `group sidebar-link !px-5 !py-3 ${isActive ? 'active' : 'hover:bg-emerald-950/40 hover:text-emerald-50'}`
-                }
-              >
-                <div className="flex items-center gap-3 flex-1">
-                  <item.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="tracking-[0.15em] font-black text-[9px]">{item.name}</span>
-                </div>
-              </NavLink>
-            ))}
+      {/* Navigation */}
+      <nav className="flex-1 space-y-1 overflow-y-auto no-scrollbar">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+          >
+            <item.icon className="w-[18px] h-[18px] shrink-0" />
+            <AnimatePresence>
+              {!collapsed && (
+                <Motion.span initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -5 }}
+                  className="whitespace-nowrap text-[13px]"
+                >
+                  {item.name}
+                </Motion.span>
+              )}
+            </AnimatePresence>
+          </NavLink>
+        ))}
+      </nav>
+
+      {/* User Card */}
+      <div className="mt-auto pt-4 border-t space-y-3" style={{ borderColor: 'rgba(74,222,128,0.08)' }}>
+        <div className="flex items-center gap-3 px-2">
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-600 to-green-800 flex items-center justify-center text-white font-bold text-sm shrink-0">
+            {user?.name?.charAt(0)?.toUpperCase() || 'H'}
           </div>
+          <AnimatePresence>
+            {!collapsed && (
+              <Motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-w-0">
+                <p className="text-xs font-semibold text-white truncate">{user?.name || 'Farmer'}</p>
+                <p className="text-[10px] text-emerald-400/60 truncate">{user?.email || ''}</p>
+              </Motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        <div className="space-y-3">
-          <p className="text-[#3e5a4a] text-[8px] font-black uppercase tracking-[0.4em] mb-4 pl-4 opacity-40">Professional Modules</p>
-          <div className="space-y-2">
-            {subItems.map((item) => (
-              <NavLink
-                key={item.name}
-                to={item.path}
-                className={({ isActive }) =>
-                  `group sidebar-link !px-5 !py-3 ${isActive ? 'active' : 'hover:bg-emerald-950/40 hover:text-emerald-50'}`
-                }
-              >
-                <div className="flex items-center gap-4 pl-2">
-                  <item.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="tracking-[0.15em] font-black text-[9px] uppercase">{item.name}</span>
-                </div>
-              </NavLink>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* 3. LAYER 3: PREMUIM PROFILE & CONNECTIVITY (BOTTOM) */}
-      <div className="mt-auto pt-8 border-t border-white/5">
-        <div className="glass-card !bg-[#152e22]/30 !rounded-2xl p-5 border border-white/5 hover:!bg-[#152e22]/50 transition-all cursor-pointer group flex items-center justify-between">
-            <div className="flex items-center gap-4">
-               <div className="relative">
-                 <img 
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop" 
-                    alt="Premium User" 
-                    className="w-12 h-12 rounded-xl object-cover border-2 border-emerald-500/20 group-hover:border-emerald-400 transition-colors shadow-lg"
-                 />
-                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0b1e15] shadow-lg animate-pulse"></div>
-               </div>
-               <div className="flex flex-col">
-                  <p className="font-black text-white text-xs tracking-tight uppercase italic underline underline-offset-2 decoration-emerald-500/30">
-                    {user?.name || 'Harvesta User'}
-                  </p>
-                  <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mt-1 truncate max-w-[145px]">
-                    {user?.email || 'No Email'}
-                  </p>
-               </div>
-            </div>
-            <Settings className="w-5 h-5 text-[#3e5a4a] group-hover:text-emerald-400 group-hover:rotate-45 transition-all" />
-        </div>
-
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="w-full mt-4 bg-[#1a3a2a] hover:bg-[#2e5e40] text-white py-3 px-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] shadow-xl transition-all flex items-center justify-center gap-3"
+        <button onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-xs font-medium transition-all hover:bg-red-500/10 text-red-400/60 hover:text-red-400"
         >
-          <LogOut className="w-4 h-4" />
-          Logout
+          <LogOut className="w-4 h-4 shrink-0" />
+          {!collapsed && <span>Logout</span>}
         </button>
-
-        {/* Global Grid Status like Mockup 1 Bottom Sidebar */}
-        <div className="mt-8 flex items-center justify-between text-[11px] font-bold text-[#3e5a4a] px-5 opacity-40 tracking-widest uppercase">
-           <div className="flex items-center gap-3">
-              <Monitor className="w-4 h-4" />
-              <span>Global Node Connected</span>
-           </div>
-           <ChevronRight className="w-4 h-4" />
-        </div>
       </div>
 
-      {/* Sidebar background abstract effect */}
-      <div className="absolute top-0 right-0 w-24 h-full bg-gradient-to-l from-emerald-500/5 to-transparent pointer-events-none" />
-    </aside>
+      {/* Collapse Toggle */}
+      <button onClick={() => setCollapsed(!collapsed)}
+        className="absolute top-7 -right-3 w-6 h-6 rounded-full bg-[#0a1a12] border flex items-center justify-center hover:bg-emerald-900/40 transition-colors z-50"
+        style={{ borderColor: 'rgba(74,222,128,0.15)' }}
+      >
+        {collapsed ? <ChevronRight className="w-3 h-3 text-emerald-400" /> : <ChevronLeft className="w-3 h-3 text-emerald-400" />}
+      </button>
+
+      {/* Ambient glow */}
+      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-emerald-500/5 to-transparent pointer-events-none" />
+    </Motion.aside>
   );
 };
 

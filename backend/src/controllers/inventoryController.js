@@ -1,54 +1,41 @@
-const db = require('../db');
-const { v4: uuidv4 } = require('uuid');
+const InventoryItem = require('../models/InventoryItem');
 
-exports.getAll = (req, res) => {
+exports.getAll = async (req, res) => {
   try {
-    const items = db.prepare('SELECT * FROM inventory_items WHERE user_id = ? ORDER BY updated_at DESC').all(req.user.id);
+    const items = await InventoryItem.find({ user: req.user._id }).sort('-updatedAt');
     res.json({ success: true, data: items });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   try {
     const { name, category, quantity, unit, minStock, cost, notes } = req.body;
-    if (!name || !category || quantity === undefined || !unit) {
-      return res.status(400).json({ success: false, message: 'name, category, quantity, and unit are required' });
+    if (!name || !category || quantity == null || !unit) {
+      return res.status(400).json({ success: false, message: 'name, category, quantity, unit required' });
     }
-    const id = uuidv4();
-    db.prepare(
-      'INSERT INTO inventory_items (id, user_id, name, category, quantity, unit, min_stock, cost, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    ).run(id, req.user.id, name, category, Number(quantity), unit, Number(minStock || 0), Number(cost || 0), notes || null);
-    const item = db.prepare('SELECT * FROM inventory_items WHERE id = ?').get(id);
+    const item = await InventoryItem.create({ user: req.user._id, name, category, quantity: +quantity, unit, minStock: +(minStock||0), cost: +(cost||0), notes: notes||'' });
     res.status(201).json({ success: true, data: item });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
   try {
-    const { id } = req.params;
-    const existing = db.prepare('SELECT * FROM inventory_items WHERE id = ? AND user_id = ?').get(id, req.user.id);
-    if (!existing) return res.status(404).json({ success: false, message: 'Item not found' });
-    const { name, category, quantity, unit, minStock, cost, notes } = req.body;
-    db.prepare(
-      `UPDATE inventory_items SET name=COALESCE(?,name), category=COALESCE(?,category), quantity=COALESCE(?,quantity), unit=COALESCE(?,unit), min_stock=COALESCE(?,min_stock), cost=COALESCE(?,cost), notes=COALESCE(?,notes), updated_at=datetime('now') WHERE id=?`
-    ).run(name||null, category||null, quantity!==undefined?Number(quantity):null, unit||null, minStock!==undefined?Number(minStock):null, cost!==undefined?Number(cost):null, notes!==undefined?notes:null, id);
-    const item = db.prepare('SELECT * FROM inventory_items WHERE id = ?').get(id);
+    const item = await InventoryItem.findOneAndUpdate({ _id: req.params.id, user: req.user._id }, req.body, { new: true, runValidators: true });
+    if (!item) return res.status(404).json({ success: false, message: 'Item not found' });
     res.json({ success: true, data: item });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-exports.remove = (req, res) => {
+exports.remove = async (req, res) => {
   try {
-    const { id } = req.params;
-    const existing = db.prepare('SELECT * FROM inventory_items WHERE id = ? AND user_id = ?').get(id, req.user.id);
-    if (!existing) return res.status(404).json({ success: false, message: 'Item not found' });
-    db.prepare('DELETE FROM inventory_items WHERE id = ?').run(id);
+    const item = await InventoryItem.findOneAndDelete({ _id: req.params.id, user: req.user._id });
+    if (!item) return res.status(404).json({ success: false, message: 'Item not found' });
     res.json({ success: true, message: 'Item deleted' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

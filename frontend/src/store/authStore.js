@@ -12,90 +12,67 @@ const useAuthStore = create(
       login: async ({ email, password }) => {
         set({ isLoading: true });
         try {
-          const response = await api.post('/auth/login', { email, password });
-          const { token, user } = response.data;
-
-          localStorage.setItem('harvesta-token', token);
-          set({ token, user, isLoading: false });
+          const { data } = await api.post('/auth/login', { email, password });
+          localStorage.setItem('harvesta-token', data.token);
+          set({ token: data.token, user: data.user, isLoading: false });
           return { ok: true };
         } catch (error) {
           set({ isLoading: false });
-          return {
-            ok: false,
-            message: error.response?.data?.message || 'Login failed. Please try again.',
-          };
+          return { ok: false, message: error.response?.data?.message || 'Login failed' };
         }
       },
 
       register: async ({ name, email, password }) => {
         set({ isLoading: true });
         try {
-          const response = await api.post('/auth/register', { name, email, password });
-          const { token, user } = response.data;
-
-          localStorage.setItem('harvesta-token', token);
-          set({ token, user, isLoading: false });
+          const { data } = await api.post('/auth/register', { name, email, password });
+          localStorage.setItem('harvesta-token', data.token);
+          set({ token: data.token, user: data.user, isLoading: false });
           return { ok: true };
         } catch (error) {
           set({ isLoading: false });
-          return {
-            ok: false,
-            message: error.response?.data?.message || 'Registration failed. Please try again.',
-          };
+          return { ok: false, message: error.response?.data?.message || 'Registration failed' };
         }
       },
 
       fetchMe: async () => {
-        if (!get().token) return { ok: false };
+        if (!get().token) return;
         try {
-          const response = await api.get('/auth/me');
-          set({ user: response.data.user });
-          return { ok: true };
-        } catch {
-          get().logout();
-          return { ok: false };
-        }
+          const { data } = await api.get('/auth/me');
+          set({ user: data.user });
+        } catch { get().logout(); }
       },
 
       updateProfile: async ({ name, email }) => {
         set({ isLoading: true });
         try {
-          const response = await api.put('/auth/me', { name, email });
-          set({ user: response.data.user, isLoading: false });
-          return { ok: true, message: 'Profile updated successfully' };
+          const { data } = await api.put('/auth/me', { name, email });
+          set({ user: data.user, isLoading: false });
+          return { ok: true };
         } catch (error) {
           set({ isLoading: false });
-          return {
-            ok: false,
-            message: error.response?.data?.message || 'Failed to update profile.',
-          };
+          return { ok: false, message: error.response?.data?.message || 'Update failed' };
         }
       },
 
       changePassword: async ({ currentPassword, newPassword }) => {
         set({ isLoading: true });
         try {
-          const response = await api.put('/auth/change-password', { currentPassword, newPassword });
+          await api.put('/auth/change-password', { currentPassword, newPassword });
           set({ isLoading: false });
-          return { ok: true, message: response.data.message || 'Password updated successfully' };
+          return { ok: true };
         } catch (error) {
           set({ isLoading: false });
-          return {
-            ok: false,
-            message: error.response?.data?.message || 'Failed to change password.',
-          };
+          return { ok: false, message: error.response?.data?.message || 'Failed' };
         }
       },
 
       logout: () => {
         localStorage.removeItem('harvesta-token');
-        set({ token: null, user: null, isLoading: false });
+        set({ token: null, user: null });
       },
     }),
-    {
-      name: 'harvesta-auth',
-      partialize: (state) => ({ token: state.token, user: state.user }),
-    }
+    { name: 'harvesta-auth', partialize: (s) => ({ token: s.token, user: s.user }) }
   )
 );
 

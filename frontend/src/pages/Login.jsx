@@ -1,218 +1,137 @@
 import React from 'react';
 import { motion as Motion } from 'framer-motion';
-import { Sprout, Mail, Lock } from 'lucide-react';
+import { Leaf, Mail, Lock, User, Eye, EyeOff, ArrowRight, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 
-const getPasswordChecks = (password) => ({
-  minLength: password.length >= 8,
-  uppercase: /[A-Z]/.test(password),
-  lowercase: /[a-z]/.test(password),
-  number: /\d/.test(password),
-  symbol: /[^A-Za-z0-9]/.test(password),
+const pwChecks = (p) => ({
+  len: p.length >= 8, upper: /[A-Z]/.test(p), lower: /[a-z]/.test(p), num: /\d/.test(p), sym: /[^A-Za-z0-9]/.test(p),
 });
-
-const getPasswordStrength = (checks) => {
-  const passed = Object.values(checks).filter(Boolean).length;
-  if (passed <= 2) return { label: 'Weak', width: '33%', color: 'bg-red-500' };
-  if (passed <= 4) return { label: 'Medium', width: '66%', color: 'bg-yellow-500' };
-  return { label: 'Strong', width: '100%', color: 'bg-emerald-500' };
+const pwStrength = (c) => {
+  const n = Object.values(c).filter(Boolean).length;
+  if (n <= 2) return { label: 'Weak', pct: 33, color: '#ef4444' };
+  if (n <= 4) return { label: 'Medium', pct: 66, color: '#facc15' };
+  return { label: 'Strong', pct: 100, color: '#4ade80' };
 };
 
-const Login = () => {
+export default function Login() {
   const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
-  const register = useAuthStore((state) => state.register);
-  const isLoading = useAuthStore((state) => state.isLoading);
-
+  const login = useAuthStore((s) => s.login);
+  const register = useAuthStore((s) => s.register);
+  const isLoading = useAuthStore((s) => s.isLoading);
   const [mode, setMode] = React.useState('login');
-  const [formData, setFormData] = React.useState({
-    name: '',
-    email: '',
-    password: '',
-  });
+  const [showPw, setShowPw] = React.useState(false);
+  const [form, setForm] = React.useState({ name: '', email: '', password: '' });
   const [error, setError] = React.useState('');
-  const passwordChecks = React.useMemo(() => getPasswordChecks(formData.password), [formData.password]);
-  const passwordStrength = React.useMemo(() => getPasswordStrength(passwordChecks), [passwordChecks]);
+  const checks = React.useMemo(() => pwChecks(form.password), [form.password]);
+  const strength = React.useMemo(() => pwStrength(checks), [checks]);
 
-  const onChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((previous) => ({ ...previous, [name]: value }));
-  };
+  const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
-  const onSubmit = async (event) => {
-    event.preventDefault();
+  const onSubmit = async (e) => {
+    e.preventDefault();
     setError('');
-
-    if (!formData.email || !formData.password || (mode === 'register' && !formData.name)) {
-      setError('Please fill all required fields.');
-      return;
+    if (!form.email || !form.password || (mode === 'register' && !form.name)) {
+      return setError('Please fill all fields');
     }
-
-    if (mode === 'register' && Object.values(passwordChecks).some((value) => !value)) {
-      setError('Password must satisfy all security requirements.');
-      return;
+    if (mode === 'register' && Object.values(checks).some((v) => !v)) {
+      return setError('Password must meet all requirements');
     }
-
     const action = mode === 'login' ? login : register;
-    const payload = mode === 'login'
-      ? { email: formData.email, password: formData.password }
-      : { name: formData.name, email: formData.email, password: formData.password };
-
-    const result = await action(payload);
-    if (result.ok) {
-      navigate('/');
-      return;
-    }
-
-    setError(result.message || 'Authentication failed');
+    const payload = mode === 'login' ? { email: form.email, password: form.password } : form;
+    const res = await action(payload);
+    if (res.ok) navigate('/dashboard');
+    else setError(res.message);
   };
 
   return (
-    <div className="relative flex min-h-screen w-full items-center justify-center p-4">
-      {/* Background image for login */}
-      <div 
-        className="absolute inset-0 z-0 opacity-40 grayscale"
-        style={{
-          backgroundImage: 'url("https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?q=80&w=2000&auto=format&fit=crop")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
-      <div className="absolute inset-0 z-[1] bg-gradient-to-br from-[#051109] to-transparent pointer-events-none" />
+    <div className="relative flex min-h-screen w-full items-center justify-center p-6">
+      {/* Animated background */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#050d0a] via-[#0a1a12] to-[#071510]" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-green-600/8 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
 
-      <Motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="relative z-10 glass-card p-8 w-full max-w-md bg-white/95 backdrop-blur-3xl shadow-[0_0_100px_rgba(0,0,0,0.4)] border-white/40"
+      <Motion.div
+        initial={{ opacity: 0, y: 30, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 w-full max-w-md"
       >
-        <div className="flex flex-col items-center mb-8">
-           <div className="bg-[#1a3a2a] p-3 rounded-2xl shadow-xl mb-4">
-              <Sprout className="w-9 h-9 text-[#7be3a6]" />
-           </div>
-           <h2 className="text-2xl font-black text-[#1a3a2a] tracking-tight text-center">
-             {mode === 'login' ? 'Access Harvesta' : 'Create Harvesta Account'}
-           </h2>
-           <p className="text-[#3e5a4a] text-xs mt-2 font-semibold uppercase tracking-widest opacity-60">Manage your field productivity</p>
-        </div>
+        <div className="glass-card p-8 space-y-6" style={{ background: 'rgba(10,26,18,0.7)' }}>
+          {/* Header */}
+          <div className="text-center space-y-3">
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-green-500 to-emerald-700 flex items-center justify-center shadow-lg shadow-green-900/40">
+              <Leaf className="w-7 h-7 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>
+              {mode === 'login' ? 'Welcome Back' : 'Create Account'}
+            </h1>
+            <p className="text-sm text-emerald-400/50">Smart agriculture management platform</p>
+          </div>
 
-        <form className="space-y-5" onSubmit={onSubmit}>
-          {mode === 'register' ? (
-            <div className="space-y-2">
-              <label className="block text-[#1a3a2a] text-xs font-black uppercase tracking-wider" htmlFor="name">
-                Full Name
-              </label>
+          <form onSubmit={onSubmit} className="space-y-4">
+            {mode === 'register' && (
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Sprout className="h-4 w-4 text-[#3e5a4a] opacity-40" />
-                </div>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={onChange}
-                  className="w-full bg-[#f2f6f3] border-2 border-transparent focus:border-[#4db67e] rounded-2xl py-3 pl-14 pr-4 text-[#1a3a2a] font-bold outline-none transition-all placeholder:text-[#1a3a2a]/20 text-sm"
-                  placeholder="Farmer Name"
-                />
+                <User className="absolute left-3.5 top-3.5 w-4 h-4 text-emerald-400/40" />
+                <input name="name" value={form.name} onChange={onChange} placeholder="Full Name" className="input-dark pl-11" />
               </div>
-            </div>
-          ) : null}
-
-          <div className="space-y-2">
-            <label className="block text-[#1a3a2a] text-xs font-black uppercase tracking-wider" htmlFor="email">
-              Email Address
-            </label>
+            )}
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Mail className="h-4 w-4 text-[#3e5a4a] opacity-40" />
-              </div>
-              <input 
-                type="email" 
-                id="email" 
-                name="email"
-                value={formData.email}
-                onChange={onChange}
-                className="w-full bg-[#f2f6f3] border-2 border-transparent focus:border-[#4db67e] rounded-2xl py-3 pl-14 pr-4 text-[#1a3a2a] font-bold outline-none transition-all placeholder:text-[#1a3a2a]/20 text-sm"
-                placeholder="farmer@harvesta.com"
-              />
+              <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-emerald-400/40" />
+              <input name="email" type="email" value={form.email} onChange={onChange} placeholder="Email address" className="input-dark pl-11" />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-[#1a3a2a] text-xs font-black uppercase tracking-wider" htmlFor="password">
-              Security Key
-            </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Lock className="h-4 w-4 text-[#3e5a4a] opacity-40" />
-              </div>
-              <input 
-                type="password" 
-                id="password" 
-                name="password"
-                value={formData.password}
-                onChange={onChange}
-                className="w-full bg-[#f2f6f3] border-2 border-transparent focus:border-[#4db67e] rounded-2xl py-3 pl-14 pr-4 text-[#1a3a2a] font-bold outline-none transition-all placeholder:text-[#1a3a2a]/20 text-sm"
-                placeholder="••••••••••••"
-              />
+              <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-emerald-400/40" />
+              <input name="password" type={showPw ? 'text' : 'password'} value={form.password} onChange={onChange} placeholder="Password" className="input-dark pl-11 pr-11" />
+              <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3.5 top-3.5 text-emerald-400/40 hover:text-emerald-400">
+                {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
 
-            {mode === 'register' ? (
-              <div className="bg-[#f2f6f3] rounded-xl p-3 border border-black/5 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[9px] font-black uppercase tracking-widest text-[#3e5a4a]">Password Strength</span>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-[#1a3a2a]">{passwordStrength.label}</span>
+            {mode === 'register' && form.password && (
+              <Motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
+                className="rounded-xl p-3 space-y-2 overflow-hidden" style={{ background: 'rgba(10,30,20,0.5)', border: '1px solid rgba(74,222,128,0.08)' }}
+              >
+                <div className="flex justify-between text-[10px] font-medium">
+                  <span className="text-emerald-400/50">Strength</span>
+                  <span style={{ color: strength.color }}>{strength.label}</span>
                 </div>
-                <div className="w-full h-1.5 bg-white rounded-full overflow-hidden">
-                  <div className={`h-full transition-all duration-300 ${passwordStrength.color}`} style={{ width: passwordStrength.width }}></div>
+                <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(74,222,128,0.1)' }}>
+                  <div className="h-full rounded-full transition-all duration-500" style={{ width: `${strength.pct}%`, background: strength.color }} />
                 </div>
-                <div className="grid grid-cols-1 gap-1 text-[9px] font-bold">
-                  <p className={passwordChecks.minLength ? 'text-emerald-700' : 'text-[#3e5a4a]/70'}>At least 8 characters</p>
-                  <p className={passwordChecks.uppercase ? 'text-emerald-700' : 'text-[#3e5a4a]/70'}>One uppercase letter</p>
-                  <p className={passwordChecks.lowercase ? 'text-emerald-700' : 'text-[#3e5a4a]/70'}>One lowercase letter</p>
-                  <p className={passwordChecks.number ? 'text-emerald-700' : 'text-[#3e5a4a]/70'}>One number</p>
-                  <p className={passwordChecks.symbol ? 'text-emerald-700' : 'text-[#3e5a4a]/70'}>One special character</p>
+                <div className="grid grid-cols-1 gap-0.5 text-[10px]">
+                  {[['len','8+ characters'],['upper','Uppercase'],['lower','Lowercase'],['num','Number'],['sym','Symbol']].map(([k,l]) => (
+                    <span key={k} className={checks[k] ? 'text-emerald-400' : 'text-emerald-400/25'}>{checks[k] ? '✓' : '○'} {l}</span>
+                  ))}
                 </div>
-              </div>
-            ) : null}
-          </div>
+              </Motion.div>
+            )}
 
-          {error ? (
-            <p className="text-red-600 text-xs font-black uppercase tracking-wider">{error}</p>
-          ) : null}
+            {error && <p className="text-red-400 text-xs font-medium">{error}</p>}
 
-          <button 
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-[#1a3a2a] hover:bg-[#2e5e40] text-white font-black py-3 px-4 rounded-2xl transition-all shadow-2xl hover:scale-[1.01] active:scale-[0.99] text-sm mt-6"
+            <button type="submit" disabled={isLoading}
+              className="btn-glow w-full py-3 rounded-xl text-white text-sm flex items-center justify-center gap-2"
+            >
+              {isLoading ? <span className="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full" /> : (
+                <>{mode === 'login' ? 'Sign In' : 'Create Account'}<ArrowRight className="w-4 h-4" /></>
+              )}
+            </button>
+          </form>
+
+          <button type="button" onClick={() => { setMode(m => m === 'login' ? 'register' : 'login'); setError(''); }}
+            className="w-full text-center text-xs text-emerald-400/50 hover:text-emerald-400 transition-colors py-2"
           >
-            {isLoading
-              ? 'Processing...'
-              : mode === 'login'
-                ? 'Authenticate Control Center'
-                : 'Create Account'}
+            {mode === 'login' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
           </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              setMode((previous) => (previous === 'login' ? 'register' : 'login'));
-              setError('');
-            }}
-            className="w-full text-[#1a3a2a] font-black py-2 px-4 rounded-2xl border border-[#1a3a2a]/20 hover:border-[#1a3a2a]/40 transition-all text-xs uppercase tracking-widest"
-          >
-            {mode === 'login' ? 'New user? Create account' : 'Already have an account? Log in'}
-          </button>
-        </form>
-
-        <div className="mt-6 pt-4 border-t border-black/5 flex justify-between items-center text-[9px] font-black text-[#3e5a4a] tracking-widest uppercase opacity-50">
-           <span>v1.2.48 ACTIVE</span>
-           <span>SECURE AES-256</span>
+          <div className="flex justify-between text-[9px] text-emerald-400/20 pt-2 border-t" style={{ borderColor: 'rgba(74,222,128,0.06)' }}>
+            <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> AES-256 Encrypted</span>
+            <span>v2.0 Stable</span>
+          </div>
         </div>
       </Motion.div>
     </div>
   );
-};
-
-export default Login;
+}

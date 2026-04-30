@@ -1,141 +1,168 @@
 import React from 'react';
 import { motion as Motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Globe, Target, Zap } from 'lucide-react';
-import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from 'recharts';
+import { TrendingUp, TrendingDown, Search, RefreshCw, BarChart3, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { ResponsiveContainer, AreaChart, Area, Tooltip, XAxis } from 'recharts';
+import api from '../lib/api';
 
-const marketData = [
-  { name: '08:00', price: 420 }, { name: '10:00', price: 435 }, { name: '12:00', price: 430 },
-  { name: '14:00', price: 450 }, { name: '16:00', price: 445 }, { name: '18:00', price: 460 },
-];
+const anim = (d = 0) => ({ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { delay: d, duration: 0.5, ease: [0.16,1,0.3,1] } });
 
-const MarketPrices = () => {
-  const commodities = [
-    { name: 'Lettuce (Premium Organic)', price: '$4.20', change: '+12.4%', trend: 'up', vol: '1.2M units' },
-    { name: 'Red Cabbage', price: '$2.80', change: '-4.2%', trend: 'down', vol: '850K units' },
-    { name: 'Soybean Futures', price: '$14.15', change: '+2.1%', trend: 'up', vol: '4.5M contracts' },
-    { name: 'Corn (Industrial)', price: '$6.50', change: '+8.7%', trend: 'up', vol: '15.2M bushels' },
-  ];
+const MiniChart = ({ data, positive }) => (
+  <div className="h-10 w-24">
+    <ResponsiveContainer width="100%" height="100%">
+      <AreaChart data={data.map((v, i) => ({ i, v }))}>
+        <defs>
+          <linearGradient id={positive ? 'miniGreen' : 'miniRed'} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={positive ? '#4ade80' : '#f87171'} stopOpacity={0.3} />
+            <stop offset="100%" stopColor={positive ? '#4ade80' : '#f87171'} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <Area type="monotone" dataKey="v" stroke={positive ? '#4ade80' : '#f87171'} strokeWidth={1.5} fill={`url(#${positive ? 'miniGreen' : 'miniRed'})`} />
+      </AreaChart>
+    </ResponsiveContainer>
+  </div>
+);
+
+export default function MarketPrices() {
+  const [commodities, setCommodities] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [search, setSearch] = React.useState('');
+  const [filterCat, setFilterCat] = React.useState('All');
+  const [selected, setSelected] = React.useState(null);
+  const [history, setHistory] = React.useState(null);
+
+  const fetchPrices = async () => {
+    setLoading(true);
+    try { const { data } = await api.get('/market'); setCommodities(data.data); }
+    catch {} finally { setLoading(false); }
+  };
+
+  React.useEffect(() => { fetchPrices(); }, []);
+
+  const fetchHistory = async (id) => {
+    setSelected(id);
+    try { const { data } = await api.get(`/market/${id}/history`); setHistory(data.data); }
+    catch { setHistory(null); }
+  };
+
+  const categories = ['All', ...new Set(commodities.map(c => c.category))];
+  const filtered = commodities.filter(c => {
+    if (filterCat !== 'All' && c.category !== filterCat) return false;
+    if (search && !c.name.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+
+  const topGainers = [...commodities].sort((a, b) => b.change - a.change).slice(0, 3);
+  const topLosers = [...commodities].sort((a, b) => a.change - b.change).slice(0, 3);
+
+  const ChartTooltip = ({ active, payload, label }) => {
+    if (!active || !payload?.length) return null;
+    return <div className="glass-card px-3 py-2 text-xs"><p className="text-emerald-400">{label}</p><p className="text-white font-semibold">₹{payload[0].value}</p></div>;
+  };
 
   return (
-    <div className="relative min-h-screen w-full bg-[#051109] text-[#1a3a2a] p-6 font-sans overflow-y-auto no-scrollbar">
-      <div className="fixed inset-0 z-0 topo-pattern opacity-10 pointer-events-none" />
+    <div className="p-6 space-y-6 min-h-screen">
+      <Motion.div {...anim(0)} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Space Grotesk' }}>Market Prices</h1>
+          <p className="text-sm text-emerald-400/50 mt-1">Live agricultural commodity rates</p>
+        </div>
+        <button onClick={fetchPrices} className="btn-glow px-4 py-2.5 rounded-xl text-white text-sm flex items-center gap-2">
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
+        </button>
+      </Motion.div>
 
-         <Motion.header 
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-6"
-      >
-        <div className="space-y-3 flex-1 min-w-0">
-          <div className="flex items-center gap-3 text-emerald-400 font-black text-[10px] tracking-[0.5em] uppercase opacity-60">
-             <Globe className="w-4 h-4" /> Global Commodity Terminal
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Motion.div {...anim(0.05)} className="glass-card p-5">
+          <h3 className="text-xs text-emerald-400/50 font-medium mb-3 flex items-center gap-1.5"><TrendingUp className="w-3.5 h-3.5 text-emerald-400" /> Top Gainers</h3>
+          <div className="space-y-2">
+            {topGainers.map(c => (
+              <div key={c.id} className="flex items-center justify-between p-2 rounded-lg" style={{ background: 'rgba(74,222,128,0.04)' }}>
+                <span className="text-sm text-white font-medium">{c.name}</span>
+                <span className="text-xs font-semibold text-emerald-400 flex items-center gap-0.5"><ArrowUpRight className="w-3 h-3" />+{c.change}%</span>
+              </div>
+            ))}
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tighter text-white uppercase italic truncate">Market Exchange</h1>
-          <p className="text-[#a3b8ad] text-[9px] font-black uppercase tracking-[0.4em] opacity-40">Trading & Arbitrage Analytics</p>
+        </Motion.div>
+        <Motion.div {...anim(0.1)} className="glass-card p-5">
+          <h3 className="text-xs text-emerald-400/50 font-medium mb-3 flex items-center gap-1.5"><TrendingDown className="w-3.5 h-3.5 text-red-400" /> Top Losers</h3>
+          <div className="space-y-2">
+            {topLosers.filter(c => c.change < 0).map(c => (
+              <div key={c.id} className="flex items-center justify-between p-2 rounded-lg" style={{ background: 'rgba(239,68,68,0.04)' }}>
+                <span className="text-sm text-white font-medium">{c.name}</span>
+                <span className="text-xs font-semibold text-red-400 flex items-center gap-0.5"><ArrowDownRight className="w-3 h-3" />{c.change}%</span>
+              </div>
+            ))}
+          </div>
+        </Motion.div>
+      </div>
+
+      {/* History Chart */}
+      {history && (
+        <Motion.div {...anim(0)} className="glass-card p-6">
+          <h3 className="text-sm font-semibold text-white mb-4">{history.commodity} — 30 Day Price History</h3>
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={history.history}>
+                <defs><linearGradient id="histGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#4ade80" stopOpacity={0.3}/><stop offset="100%" stopColor="#4ade80" stopOpacity={0}/></linearGradient></defs>
+                <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: 'rgba(74,222,128,0.3)', fontSize: 9 }} interval={4} />
+                <Tooltip content={<ChartTooltip />} />
+                <Area type="monotone" dataKey="price" stroke="#4ade80" strokeWidth={2} fill="url(#histGrad)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Motion.div>
+      )}
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3.5 top-3 w-4 h-4 text-emerald-400/30" />
+          <input placeholder="Search commodities..." value={search} onChange={(e) => setSearch(e.target.value)} className="input-dark pl-10" />
         </div>
-        <div className="bg-[#1a3a2a] p-5 rounded-2xl border border-white/5 shadow-2xl flex flex-col items-center gap-1 group cursor-pointer hover:bg-emerald-900 transition-colors shrink-0">
-           <p className="text-[9px] font-black uppercase text-emerald-400 opacity-60">Total Portfolio</p>
-           <h3 className="text-xl font-black text-white">$142,480</h3>
-        </div>
-      </Motion.header>
-
-      <div className="relative z-10 grid grid-cols-12 gap-6 items-start pb-12">
-        
-        {/* Main Terminal Area */}
-        <div className="col-span-12 xl:col-span-8 flex flex-col gap-8">
-                <Motion.div 
-             initial={{ scale: 0.95, opacity: 0 }}
-             animate={{ scale: 1, opacity: 1 }}
-             className="glass-card p-10 !bg-[#0b1e15]/95 shadow-2xl border-white/10 flex flex-col min-h-[500px]"
-           >
-              <div className="flex flex-col sm:flex-row justify-between items-start gap-10 mb-12 border-b border-white/5 pb-8">
-                 <div className="flex-1 min-w-0">
-                    <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tighter italic uppercase mb-2 leading-none">Lettuce Index (LTX)</h2>
-                    <p className="text-emerald-400 text-[10px] font-black uppercase tracking-widest">+12.4% PERFORMANCE OVER 24H</p>
-                 </div>
-                 <div className="flex gap-2 bg-white/5 p-2 rounded-2xl border border-white/5 shrink-0 h-12 items-center">
-                    {['1H', '4H', '1D', '1W', '1M'].map(t => (
-                      <button key={t} className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase transition-all ${t === '1D' ? 'bg-emerald-500 text-white shadow-lg' : 'text-emerald-100/40 hover:text-white'}`}>{t}</button>
-                    ))}
-                 </div>
-              </div>
-              
-              <div className="flex-1 w-full mx-auto pb-10">
-                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={marketData}>
-                       <defs>
-                          <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                             <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
-                             <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                          </linearGradient>
-                       </defs>
-                       <Area type="monotone" dataKey="price" stroke="#10b981" strokeWidth={5} fill="url(#colorPrice)" />
-                       <XAxis dataKey="name" hide />
-                       <Tooltip contentStyle={{ backgroundColor: '#051109', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1.5rem', color: '#fff' }} itemStyle={{ color: '#10b981', fontWeight: 'black' }} />
-                    </AreaChart>
-                 </ResponsiveContainer>
-              </div>
-
-              <div className="grid grid-cols-3 gap-8 text-center pt-8 border-t border-white/5">
-                 <div>
-                    <p className="text-[10px] font-black uppercase text-emerald-400/40 mb-2">High 24h</p>
-                    <p className="text-xl sm:text-2xl font-black text-white italic">$462.40</p>
-                 </div>
-                 <div>
-                    <p className="text-[10px] font-black uppercase text-emerald-400/40 mb-2">Low 24h</p>
-                    <p className="text-xl sm:text-2xl font-black text-white italic">$415.80</p>
-                 </div>
-                 <div>
-                    <p className="text-[10px] font-black uppercase text-emerald-400/40 mb-2">Volume</p>
-                    <p className="text-xl sm:text-2xl font-black text-white italic">1.2M Units</p>
-                 </div>
-              </div>
-           </Motion.div>
-        </div>
-
-        {/* Live Feed Sidebar */}
-        <div className="col-span-12 xl:col-span-4 flex flex-col gap-8">
-                <Motion.div 
-             initial={{ x: 50, opacity: 0 }}
-             animate={{ x: 0, opacity: 1 }}
-             className="glass-card !bg-white/95 p-12 shadow-2xl flex flex-col gap-10 !rounded-[3rem]"
-           >
-              <div className="flex justify-between items-center border-b border-black/5 pb-8">
-                 <h3 className="text-xl font-black tracking-tighter italic uppercase text-[#1a3a2a]">Live Feed Terminal</h3>
-                 <div className="h-3 w-3 bg-red-500 rounded-full animate-ping shadow-[0_0_10px_rgba(239,68,68,1)]"></div>
-              </div>
-              
-              <div className="space-y-4">
-                 {commodities.map((c, i) => (
-                   <div key={i} className="flex justify-between items-center group cursor-pointer p-4 hover:bg-[#f2f6f3] rounded-[2rem] transition-all border border-transparent hover:border-black/5 gap-6">
-                      <div className="flex items-center gap-5 min-w-0">
-                         <div className={`p-3 rounded-xl ${c.trend === 'up' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'} shadow-sm border border-black/5 shrink-0`}>
-                            {c.trend === 'up' ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                         </div>
-                         <div className="min-w-0">
-                            <p className="text-[11px] font-black text-[#1a3a2a] uppercase truncate leading-none mb-1">{c.name}</p>
-                            <p className="text-[9px] font-black text-[#3e5a4a] opacity-30 uppercase tracking-widest truncate">{c.vol} TRADED</p>
-                         </div>
-                      </div>
-                      <div className="text-right shrink-0 min-w-[70px]">
-                         <p className="text-lg font-black text-[#1a3a2a] leading-none mb-1">{c.price}</p>
-                         <p className={`text-[9px] font-black uppercase tracking-widest ${c.trend === 'up' ? 'text-emerald-600' : 'text-red-500'}`}>{c.change}</p>
-                      </div>
-                   </div>
-                 ))}
-              </div>
-
-              <div className="bg-[#1a3a2a] p-10 rounded-[2.5rem] shadow-2xl text-center space-y-6 relative overflow-hidden group">
-                 <Target className="w-10 h-10 text-emerald-400 mx-auto group-hover:scale-110 transition-transform" />
-                 <h4 className="text-lg font-black text-white uppercase italic tracking-tighter">Profit Prediction AI</h4>
-                 <p className="text-[10px] font-medium text-emerald-100 opacity-60 px-2 leading-relaxed uppercase tracking-widest">Sector B projects <span className="text-emerald-400 font-bold">+15% spike</span> for Q4.</p>
-                 <button className="w-full bg-emerald-500 text-[#0b1e15] py-4 rounded-full font-black uppercase text-[10px] tracking-widest shadow-xl hover:bg-emerald-400 transition-colors">Apply Strategy</button>
-                 <div className="absolute top-0 right-0 p-4 opacity-5"><Zap className="w-20 h-20 text-white" /></div>
-              </div>
-                </Motion.div>
+        <div className="flex gap-2 flex-wrap">
+          {categories.map(c => (
+            <button key={c} onClick={() => setFilterCat(c)}
+              className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${filterCat === c ? 'text-white' : 'text-emerald-400/40 hover:text-emerald-400/70'}`}
+              style={filterCat === c ? { background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.2)' } : { background: 'rgba(10,30,20,0.3)', border: '1px solid rgba(74,222,128,0.05)' }}
+            >{c}</button>
+          ))}
         </div>
       </div>
+
+      {/* Commodities Table */}
+      <Motion.div {...anim(0.15)} className="glass-card overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr style={{ borderBottom: '1px solid rgba(74,222,128,0.08)' }}>
+                {['Commodity','Category','Price','Change','Trend',''].map(h => (
+                  <th key={h} className="text-left px-5 py-3 text-[10px] font-semibold text-emerald-400/40 uppercase tracking-wider">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((c, i) => {
+                const pos = c.change >= 0;
+                return (
+                  <tr key={c.id} className="transition-colors hover:bg-emerald-500/[0.03] cursor-pointer" style={{ borderBottom: '1px solid rgba(74,222,128,0.04)' }} onClick={() => fetchHistory(c.id)}>
+                    <td className="px-5 py-4"><span className="text-sm font-semibold text-white">{c.name}</span></td>
+                    <td className="px-5 py-4"><span className="badge text-[10px]" style={{ background: 'rgba(74,222,128,0.08)', color: 'rgba(74,222,128,0.6)' }}>{c.category}</span></td>
+                    <td className="px-5 py-4"><span className="text-sm font-bold text-white">₹{c.price.toFixed(2)}</span><span className="text-[10px] text-emerald-400/30 ml-1">{c.unit}</span></td>
+                    <td className="px-5 py-4">
+                      <span className={`text-xs font-semibold flex items-center gap-0.5 ${pos ? 'text-emerald-400' : 'text-red-400'}`}>
+                        {pos ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}{pos ? '+' : ''}{c.change}%
+                      </span>
+                    </td>
+                    <td className="px-5 py-4"><MiniChart data={c.trend} positive={pos} /></td>
+                    <td className="px-5 py-4"><BarChart3 className="w-4 h-4 text-emerald-400/20 hover:text-emerald-400 transition" /></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Motion.div>
     </div>
   );
-};
-
-export default MarketPrices;
+}
